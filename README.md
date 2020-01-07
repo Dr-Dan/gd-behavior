@@ -31,7 +31,7 @@ var seq = GDBehavior.Composites.Sequencer.new(children)
 
 ## Usage
 
-The example should explain most things, otherwise look at the code.
+The [example](https://github.com/Dr-Dan/gd-behavior/blob/master/examples/hellooo/TestScene.gd) should explain most things, otherwise look at the code.
 
 If you are going to use composites with memory (SequencerMem) then you need to manually clear running history.
 This will be automatically handled if using the TreeRunner class. Alternatively, this could be handled within the tick class.
