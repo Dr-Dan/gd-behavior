@@ -2,13 +2,12 @@ extends Node2D
 
 """
 An example where actors walk around and say something if within range.
-Note that this is not necessarily the best way to use this tool
 """
 
 # ================================================================		
 # Extend and add required variables (for my actions) to tick.
 # Tick is a good way to get outside info to the running node.
-const Tick = preload("res://addons/BehaviourTree/Tick.gd")
+const Tick = preload("res://addons/GDBehavior/Tick.gd")
 
 class TestTick:
 	extends Tick
@@ -21,7 +20,7 @@ class TestTick:
 		
 # ================================================================		
 # CUSTOM NODES
-const BTNode = preload("res://addons/BehaviourTree/Base/BTNode.gd")
+const BTNode = preload("res://addons/GDBehavior/Base/BTNode.gd")
 
 # Note: using time_waited[self] would overwrite if using an object multiple times in the tree.
 # this is fine: Parallel.new([WaitDelta.new(2), WaitDelta.new(2)], 2)
@@ -146,7 +145,7 @@ func _process(delta):
 		
 # ================================================================		
 
-const BT = preload("res://addons/BehaviourTree/BehaviourTree.gd")
+const BT = preload("res://addons/GDBehavior/GDBehavior.gd")
 const SeqMem = BT.Composites.SequencerMem
 const SelMem = BT.Composites.SelectorMem
 const Parallel = BT.Composites.Parallel

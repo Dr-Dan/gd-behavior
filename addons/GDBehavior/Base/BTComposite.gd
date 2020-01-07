@@ -1,4 +1,4 @@
-extends "res://addons/BehaviourTree/Base/BTNode.gd"
+extends "res://addons/GDBehavior/Base/BTNode.gd"
 
 var children:Array = []
 func _init(children:Array, name:String).(name):

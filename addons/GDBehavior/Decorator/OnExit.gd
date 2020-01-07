@@ -1,4 +1,4 @@
-extends "res://addons/BehaviourTree/Base/BTDecorator.gd"
+extends "res://addons/GDBehavior/Base/BTDecorator.gd"
 
 """
 	Do something every time node exits

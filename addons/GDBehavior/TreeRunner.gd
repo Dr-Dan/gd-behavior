@@ -1,8 +1,8 @@
 extends Resource
 
-const Tick = preload("res://addons/BehaviourTree/Tick.gd")
-const BTComposite = preload("res://addons/BehaviourTree/Base/BTComposite.gd")
-const BTNode = preload("res://addons/BehaviourTree/Base/BTNode.gd")
+const Tick = preload("res://addons/GDBehavior/Tick.gd")
+const BTComposite = preload("res://addons/GDBehavior/Base/BTComposite.gd")
+const BTNode = preload("res://addons/GDBehavior/Base/BTNode.gd")
 
 var root: BTComposite
 

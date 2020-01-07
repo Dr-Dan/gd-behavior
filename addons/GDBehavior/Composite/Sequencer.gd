@@ -1,4 +1,4 @@
-extends "res://addons/BehaviourTree/Base/BTComposite.gd"
+extends "res://addons/GDBehavior/Base/BTComposite.gd"
 
 func _init(children:Array).(children, "sequencer"):
 	pass
