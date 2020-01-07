@@ -22,8 +22,8 @@ There currently is little reason to enable from the plugins menu other than bein
 
 ```gdscript
 # Not enabled
-const BT = preload("res://addons/GDBehavior/GDBehavior.gd")
-var seq = BT.Composites.Sequencer.new(children)
+const GDB = preload("res://addons/GDBehavior/GDBehavior.gd")
+var seq = GDB.Composites.Sequencer.new(children)
 
 # Enabled from Plugins menu
 var seq = GDBehavior.Composites.Sequencer.new(children)
