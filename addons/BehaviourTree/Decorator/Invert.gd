@@ -1,0 +1,13 @@
+extends "res://addons/BehaviourTree/Base/BTDecorator.gd"
+
+func _init(child).(child, "invert decorator"):
+	pass
+	
+func _exe(tick):
+	var r = _get_child().exe(tick)
+	if r == SUCCESS:
+		return FAILURE
+	elif r == FAILURE:
+		return SUCCESS
+	return RUNNING
+       
