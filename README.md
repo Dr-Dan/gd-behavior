@@ -18,7 +18,7 @@ Behavior trees with maximum ease.
 
 ## Installation
 Download from the Godot Asset Store or place into the 'addons' folder in your project.
-There currently is little reason to enable from the plugins menu other than being able to access scripts using BehaviorTree:
+There currently is little reason to enable from the plugins menu other than being able to access scripts using GDBehavior:
 
 ```gdscript
 # Not enabled
@@ -31,7 +31,7 @@ var seq = GDBehavior.Composites.Sequencer.new(children)
 
 ## Usage
 
-The example should explain most things, otherwise look at the code.
+The [example](https://github.com/Dr-Dan/gd-behavior/blob/master/examples/hellooo/TestScene.gd) should explain most things, otherwise look at the addon code.
 
 If you are going to use composites with memory (SequencerMem) then you need to manually clear running history.
 This will be automatically handled if using the TreeRunner class. Alternatively, this could be handled within the tick class.
