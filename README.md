@@ -12,9 +12,9 @@ Behavior trees with maximum ease.
 * Simple
 * Extendable
 * Good for:
- * learning
- * rapid prototyping
- * experimentation
+  * learning
+  * rapid prototyping
+  * experimentation
 
 ## Installation
 Download from the Godot Asset Store or place into the 'addons' folder in your project.
@@ -50,3 +50,4 @@ Result constants are defined in the BTNode class (SUCCESS, FAILURE, RUNNING).
 * FSM (Basic, Stack, Hierarchical)
 * Generated trees (GOAP, PPA)
 * Tests
+* JSON saving/loading
