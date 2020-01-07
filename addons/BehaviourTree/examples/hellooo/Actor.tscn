@@ -4,9 +4,9 @@
 [ext_resource path="res://addons/BehaviourTree/examples/hellooo/Actor.gd" type="Script" id=2]
 
 [node name="Sprite" type="Sprite"]
+z_index = -1
 texture = ExtResource( 1 )
 script = ExtResource( 2 )
-greetings = [ "Hello", "Good Day", "Yoyo-yo", "Wassuuuup", "Aight", "Howdy", "EZ", "Hola", "Hey Mate" ]
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 visible = false

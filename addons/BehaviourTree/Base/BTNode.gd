@@ -1,8 +1,8 @@
 extends Resource
 
-const FAILURE = "failure"
-const SUCCESS = "success"
-const RUNNING = "running"
+const FAILURE = -1
+const SUCCESS = 1
+const RUNNING = 2
 
 var name:String
 func _init(name:String):

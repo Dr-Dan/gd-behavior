@@ -18,14 +18,6 @@ _global_script_class_icons={
 config/name="BTLib"
 config/icon="res://icon.png"
 
-[autoload]
-
-BehaviourTree="*res://addons/BehaviourTree/BehaviourTree.gd"
-
-[editor_plugins]
-
-enabled=PoolStringArray( "BehaviourTree" )
-
 [rendering]
 
 environment/default_environment="res://default_env.tres"

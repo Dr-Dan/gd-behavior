@@ -1,6 +1,13 @@
 extends Node2D
 
+"""
+An example where actors walk around and say something if within range.
+Note that this is not necessarily the best way to use this tool
+"""
+
 # ================================================================		
+# Extend and add required variables (for my actions) to tick.
+# Tick is a good way to get outside info to the running node.
 const Tick = preload("res://addons/BehaviourTree/Tick.gd")
 
 class TestTick:
@@ -13,30 +20,28 @@ class TestTick:
 		self.actor = actor
 		
 # ================================================================		
-# CUSTOM ACTIONS
+# CUSTOM NODES
 const BTNode = preload("res://addons/BehaviourTree/Base/BTNode.gd")
+
+# Note: using time_waited[self] would overwrite if using an object multiple times in the tree.
+# this is fine: Parallel.new([WaitDelta.new(2), WaitDelta.new(2)], 2)
+# this is not: var w = WaitDelta.new(2)  ...  Parallel.new([w,w], 2)
 
 class WaitDelta:
 	extends BTNode
 	var duration: float
-	var timer_index:int
-	func _init(duration_secs:float, timer_index:int=0).("wait_delta_time"):
+
+	func _init(duration_secs:float).("wait_delta_time"):
 		self.duration = duration_secs
-		self.timer_index = timer_index
 		
 	func _open(tick):
-		set_time(tick, 0.0)
-		
+		tick.actor.time_waited[self] = 0.0
+
 	func _exe(tick):
-#		var t = tick.actor.time_waited
-		tick.actor.time_waited[timer_index] += tick.delta
-#		set_time(tick, t)
-		if tick.actor.time_waited[timer_index] > duration:
+		tick.actor.time_waited[self] += tick.delta
+		if tick.actor.time_waited[self] > duration:
 			return SUCCESS
 		return RUNNING
-
-	func set_time(tick, t):
-		tick.actor.time_waited[timer_index] = t
 
 class GotoRandom:
 	extends BTNode
@@ -150,7 +155,7 @@ const Succeeder = BT.Decorators.Succeeder
 onready var actors = $Actors.get_children()
 
 var ticks = []
-var wait_runner
+var tree_runner
 
 func setup_actor_goto():
 	var vp_sz = get_viewport_rect().size
@@ -163,20 +168,21 @@ func setup_actor_goto():
 	var speak = SelMem.new([
 		IsSpeaking.new(),
 		SeqMem.new([
-			ActorInRange.new(64.0, actors),
+			ActorInRange.new(80.0, actors),
 			SayRandom.new(),
-			WaitDelta.new(2.5, 0),
+			WaitDelta.new(2.5),
 			StopSpeaking.new()])])
 			
 	var goto = SeqMem.new([
 		GotoRandom.new(vp_sz, 80.0),
-		WaitDelta.new(2.0, 1),
+		WaitDelta.new(2.0),
 		ColorRandom.new()])
 		
-	var act = Parallel.new([Succeeder.new(speak), goto], 2)
-	wait_runner = BT.BTRunner.new(act)
+	var root = Parallel.new([Succeeder.new(speak), goto], 2)
+	tree_runner = BT.BTRunner.new(root)
 	
+# Note: this could also be handled from each actor's _process(delta) function
 func test_actor_goto(delta):
 	for t in ticks:
 		t.delta = delta
-		wait_runner.exe(t)
+		tree_runner.exe(t)
