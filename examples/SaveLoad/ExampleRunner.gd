@@ -1,23 +1,17 @@
 extends Node2D
 
 """
-An example where actors walk around and say something if within range.
-Nodes are defined in script for tutorial purposes. This is not a requirement.
+An example showing the save system. 
+Note that nodes need to be defined in seperate files as the script-path needs to be saved.
+Also if a file is moved or renamed post-save, loading will fail.
 """
 
 # ================================================================		
-# The tick
-# 	passed to each node as they execute
-# 	handles the running memory and closing hanging nodes
-#	useful for extracting information about execution for logging
-# 	also used to get outside info to the running node as shown below
 const Tick = preload("res://addons/GDBehavior/Tick.gd")
 
 class TestTick:
 	extends Tick
 	
-	# time_waited could also be an actor variable
-	# inversely all actor data could reside in the tick
 	var time_waited = {}
 	var delta: float
 	var actor
@@ -91,9 +85,7 @@ func setup_actor_goto():
 	var root_loaded = SaveLoad.load_tree(test_filename)
 	tree_runner = BTRunner.new(root_loaded)
 
-# Note: this could also be handled from each actor's _process(delta) function
 func test_actor_goto(delta):
 	for t in ticks:
 		t.delta = delta
-		# TreeRunner returns an integer for SUCCESS, FAILURE, RUNNING
 		tree_runner.exe(t)

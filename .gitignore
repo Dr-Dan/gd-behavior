@@ -5,3 +5,4 @@
 # Godot-specific ignores
 .import/
 NOTES.txt
+addons/GDBehavior/Composite/ParallelSimple.gd

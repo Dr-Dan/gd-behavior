@@ -28,7 +28,7 @@ static func load_tree(filename):
 	var save_game = File.new()
 	filename = "user://%s.save" % filename
 	if not save_game.file_exists(filename):
-		return # Error! We don't have a save to load.
+		return [] # Error! We don't have a save to load.
 
 	save_game.open(filename, File.READ)
 	var nodes = []
@@ -38,8 +38,22 @@ static func load_tree(filename):
 		nodes.append(line)
 		
 	return from_data(nodes)
-
 	
+static func delete_tree(tree_name:String):
+	var result = false
+	# TODO: move to validate func
+	if not tree_name.empty() and not tree_name.begins_with("."):
+		result =  _delete_game_file(tree_name)
+	return false
+		
+static func _delete_file(save_name:String):
+	var dir = Directory.new()
+	var file_path = "user://%s.save" % save_name
+	if dir.file_exists(file_path):
+		dir.remove(file_path)
+		return true
+	return false
+					
 static func to_data(root:Composite):
 	var nodes = get_nodes_dfs(root)
 	var result = []

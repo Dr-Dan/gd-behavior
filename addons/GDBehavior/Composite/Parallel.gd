@@ -1,6 +1,7 @@
 extends "res://addons/GDBehavior/Base/BTComposite.gd"
 
 # amount of nodes returning SUCCESS required before exit
+# fails if n_failed > n_children - success_count
 var success_count: int
 
 func _init(children:Array, success_count:int=1).(children, "parallel"):
@@ -24,7 +25,6 @@ func _exe(tick):
 		result = FAILURE
 		return result	
 	return result
-	
 	
 func to_dict():
 	return {success_count=success_count}
