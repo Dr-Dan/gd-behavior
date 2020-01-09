@@ -1,4 +1,4 @@
-extends "res://addons/GDBehavior/Base/BTNode.gd"
+extends "res://addons/GDBehavior/Base/BTAction.gd"
 
 func _init().("say random greeting"):
 	pass

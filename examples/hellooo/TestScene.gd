@@ -27,17 +27,17 @@ class TestTick:
 		
 # ================================================================		
 # CUSTOM NODES
-const BTNode = preload("res://addons/GDBehavior/Base/BTNode.gd")
+const BTAction = preload("res://addons/GDBehavior/Base/BTAction.gd")
 
 # Note: using time_waited[self] would overwrite if using an object multiple times in the tree.
 # It would have the same effect on the running list
 # this is fine: Parallel.new([WaitDelta.new(2), WaitDelta.new(2)], 2)
 # this is not: var w = WaitDelta.new(2)  ...  Parallel.new([w,w], 2)
 
-# Classes extending BTNode should override functions beginning with _ i.e. _exe, _open
+# Classes extending BTAction should override functions beginning with _ i.e. _exe, _open
 
 class WaitDelta:
-	extends BTNode
+	extends BTAction
 	var duration: float
 
 	func _init(duration_secs:float).("wait_delta_time"):
@@ -53,7 +53,7 @@ class WaitDelta:
 		return RUNNING
 
 class GotoRandom:
-	extends BTNode
+	extends BTAction
 	var area: Vector2
 	var stop_dist: float
 	var spd: float
@@ -81,7 +81,7 @@ class GotoRandom:
 		return Vector2(x,y)
 		
 class ColorRandom:
-	extends BTNode
+	extends BTAction
 
 	func _init().("color random"):
 		pass
@@ -94,7 +94,7 @@ class ColorRandom:
 		return Color(randf(), randf(), randf())
 
 class StopSpeaking:
-	extends BTNode
+	extends BTAction
 	
 	func _init().("stop speaking"):
 		pass
@@ -104,7 +104,7 @@ class StopSpeaking:
 		return SUCCESS
 
 class SayRandom:
-	extends BTNode
+	extends BTAction
 
 	func _init().("say random greeting"):
 		pass
@@ -118,7 +118,7 @@ class SayRandom:
 # CONDITIONALS
 				
 class ActorInRange:
-	extends BTNode
+	extends BTAction
 	
 	var distance: float
 	var actors = []
@@ -135,7 +135,7 @@ class ActorInRange:
 		return FAILURE
 		
 class IsSpeaking:
-	extends BTNode
+	extends BTAction
 
 	func _init().("is speaking?"):
 		pass

@@ -4,7 +4,7 @@ func _init(name:String).(name):
 	pass
 
 func _exe(tick):
-	if validate(tick):
+	if _validate(tick):
 		return SUCCESS
 	return FAILURE
 

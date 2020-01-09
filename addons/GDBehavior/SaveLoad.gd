@@ -10,6 +10,7 @@ structure = [
 """
 
 const Composite = preload("res://addons/GDBehavior/Base/BTComposite.gd")
+const Decorator = preload("res://addons/GDBehavior/Base/BTDecorator.gd")
 
 static func save_tree(root:Composite, filename:String):
 	var data = to_data(root)
@@ -43,7 +44,8 @@ static func delete_tree(tree_name:String):
 	var result = false
 	# TODO: move to validate func
 	if not tree_name.empty() and not tree_name.begins_with("."):
-		result =  _delete_game_file(tree_name)
+		result = _delete_file(tree_name)
+		return result
 	return false
 		
 static func _delete_file(save_name:String):
@@ -91,7 +93,7 @@ static func from_data(data):
 				children.append(nodes[nodes.size()-j])
 			# TODO: shouldn't rely on single argument constructors for composites
 			# At the least, all nodes should have arg-less constructor			
-			node = script.new(children).from_dict(nd_data) # .set_children()
+			node = script.new(children).from_dict(nd_data) # .with_children(children)?
 		else:
 			node = script.new().from_dict(nd_data)
 		node.name = nd_data.name

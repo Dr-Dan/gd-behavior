@@ -4,6 +4,8 @@ extends Node2D
 An example showing the save system. 
 Note that nodes need to be defined in seperate files as the script-path needs to be saved.
 Also if a file is moved or renamed post-save, loading will fail.
+
+Currently cannot load/save decorators.
 """
 
 # ================================================================		
@@ -41,6 +43,8 @@ const Speak = preload("res://examples/SaveLoad/Actions/SayRandom.gd")
 const StopSpeaking = preload("res://examples/SaveLoad/Actions/StopSpeaking.gd")
 const Print = preload("res://examples/SaveLoad/Actions/Print.gd")
 
+const AlwaysCond = preload("res://examples/SaveLoad/Actions/AlwaysCondition.gd")
+
 const SaveLoad = preload("res://addons/GDBehavior/SaveLoad.gd")
 
 onready var actors = $Actors.get_children()
@@ -56,8 +60,9 @@ func setup_actor_goto():
 		a.position = Vector2(randf() * vp_sz.x, randf() * vp_sz.y)
 	
 	var goto = SeqMem.new([
+			AlwaysCond.new(true),
 			GotoRandom.new(vp_sz, 400.0),
-			Wait.new(0.0)])
+			Wait.new(1.0)])
 		
 	var speak = SeqMem.new([
 		Speak.new(),
@@ -65,8 +70,10 @@ func setup_actor_goto():
 		StopSpeaking.new(),
 		Wait.new(3.0),
 		Print.new("I will now speak...")])
+		
 	var root = Parallel.new([goto, speak], 2)
 		
+	# Note: 'children' indexes are saved as offset from parent for loading convenience
 	print("\nSAVED TREE")
 	var data_save = SaveLoad.to_data(root)
 	for d in data_save:
@@ -83,6 +90,8 @@ func setup_actor_goto():
 	var saved = SaveLoad.save_tree(root, test_filename)
 	assert(saved)
 	var root_loaded = SaveLoad.load_tree(test_filename)
+	var destroyed = SaveLoad.delete_tree(test_filename)
+	assert(destroyed)
 	tree_runner = BTRunner.new(root_loaded)
 
 func test_actor_goto(delta):

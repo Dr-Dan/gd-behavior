@@ -6,3 +6,4 @@
 .import/
 NOTES.txt
 addons/GDBehavior/Composite/ParallelSimple.gd
+addons/GDBehavior/Decorator
