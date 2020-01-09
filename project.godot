@@ -18,6 +18,14 @@ _global_script_class_icons={
 config/name="GDBehavior"
 config/icon="res://icon.png"
 
+[autoload]
+
+GDBehavior="*res://addons/GDBehavior/GDBehavior.gd"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "GDBehavior" )
+
 [rendering]
 
 environment/default_environment="res://default_env.tres"

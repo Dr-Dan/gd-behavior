@@ -2,16 +2,23 @@ extends Node2D
 
 """
 An example where actors walk around and say something if within range.
+Nodes are defined in script for tutorial purposes. This is not a requirement.
 """
 
 # ================================================================		
-# Extend and add required variables (for my actions) to tick.
-# Tick is a good way to get outside info to the running node.
+# The tick
+# 	passed to each node as they execute
+# 	handles the running memory and closing hanging nodes
+#	useful for extracting information about execution for logging
+# 	also used to get outside info to the running node as shown below
 const Tick = preload("res://addons/GDBehavior/Tick.gd")
 
 class TestTick:
 	extends Tick
 	
+	# time_waited could also be an actor variable
+	# inversely all actor data could reside in the tick
+	var time_waited = {}
 	var delta: float
 	var actor
 	
@@ -23,8 +30,11 @@ class TestTick:
 const BTNode = preload("res://addons/GDBehavior/Base/BTNode.gd")
 
 # Note: using time_waited[self] would overwrite if using an object multiple times in the tree.
+# It would have the same effect on the running list
 # this is fine: Parallel.new([WaitDelta.new(2), WaitDelta.new(2)], 2)
 # this is not: var w = WaitDelta.new(2)  ...  Parallel.new([w,w], 2)
+
+# Classes extending BTNode should override functions beginning with _ i.e. _exe, _open
 
 class WaitDelta:
 	extends BTNode
@@ -34,11 +44,11 @@ class WaitDelta:
 		self.duration = duration_secs
 		
 	func _open(tick):
-		tick.actor.time_waited[self] = 0.0
+		tick.time_waited[self] = 0.0
 
 	func _exe(tick):
-		tick.actor.time_waited[self] += tick.delta
-		if tick.actor.time_waited[self] > duration:
+		tick.time_waited[self] += tick.delta
+		if tick.time_waited[self] > duration:
 			return SUCCESS
 		return RUNNING
 
@@ -145,11 +155,13 @@ func _process(delta):
 		
 # ================================================================		
 
-const BT = preload("res://addons/GDBehavior/GDBehavior.gd")
-const SeqMem = BT.Composites.SequencerMem
-const SelMem = BT.Composites.SelectorMem
-const Parallel = BT.Composites.Parallel
-const Succeeder = BT.Decorators.Succeeder
+const BTRunner = preload("res://addons/GDBehavior/TreeRunner.gd")
+const Composites = preload("res://addons/GDBehavior/Composites.gd")
+const Decorators = preload("res://addons/GDBehavior/Decorators.gd")
+const SeqMem = Composites.SequencerMem
+const SelMem = Composites.SelectorMem
+const Parallel = Composites.Parallel
+const Succeeder = Decorators.Succeeder
 
 onready var actors = $Actors.get_children()
 
@@ -178,10 +190,11 @@ func setup_actor_goto():
 		ColorRandom.new()])
 		
 	var root = Parallel.new([Succeeder.new(speak), goto], 2)
-	tree_runner = BT.BTRunner.new(root)
+	tree_runner = BTRunner.new(root)
 	
 # Note: this could also be handled from each actor's _process(delta) function
 func test_actor_goto(delta):
 	for t in ticks:
 		t.delta = delta
+		# TreeRunner returns an integer for SUCCESS, FAILURE, RUNNING
 		tree_runner.exe(t)

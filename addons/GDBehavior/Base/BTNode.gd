@@ -18,7 +18,7 @@ func exe(tick):
 
 	var result = _exe(tick)
 	assert(result != null) # Did you remember to return a result?..
-	tick.exe(self, result)
+	tick.exe(self, result) 
 	
 	if _should_close(result):
 		tick.close(self)
@@ -29,9 +29,11 @@ func exe(tick):
 	
 	return result
 
+# ========================================
+# Extend these
+
 func _exe(tick):
 	return SUCCESS
-
 
 func _enter(tick):
 	pass
@@ -45,5 +47,13 @@ func _open(tick):
 func _close(tick):
 	pass	
 
+# ========================================
+
 func _should_close(result):
 	return result != RUNNING
+	
+func to_dict():
+	return {}
+	
+func from_dict(dict):	
+	return self

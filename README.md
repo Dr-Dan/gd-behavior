@@ -5,6 +5,8 @@ Written in Godot 3.1.
 
 Influenced by https://github.com/godot-addons/godot-behavior-tree-plugin.
 
+Also https://arxiv.org/pdf/1709.00084.pdf
+
 ## Philosophy
 
 Behavior trees with maximum ease.
@@ -31,23 +33,49 @@ var seq = GDBehavior.Composites.Sequencer.new(children)
 
 ## Usage
 
+Behavior nodes extend BTNode
+
+```gdscript
+const GDB = preload("res://addons/GDBehavior/GDBehavior.gd")
+const Tick = preload("res://addons/GDBehavior/Tick.gd")
+
+class Print:
+	extends "res://addons/GDBehavior/Base/BTNode.gd"
+	var msg
+
+	func _init(msg).("print"):
+		self.msg = msg
+
+	func _exe(tick):
+        print(msg)
+
+const Seq = GDB.Composites.Sequencer
+var tick = Tick.new()
+func print_hello_world():
+    var root = Seq.new([Print.new("Hello"), Print.new("World!")])
+    var tree_runner = BTRunner.new(root)
+    
+    # prints "Hello", "World!"; result = BTNode.SUCCESS
+    var result = tree_runner.exe(tick)
+    # root.exe(tick) # would also work as no memory is required
+    
+```
+
 The [example](https://github.com/Dr-Dan/gd-behavior/blob/master/examples/hellooo/TestScene.gd) should explain most things, otherwise look at the addon code.
 
-If you are going to use composites with memory (SequencerMem) then you need to manually clear running history.
-This will be automatically handled if using the TreeRunner class. Alternatively, this could be handled within the tick class.
+If you are going to use composites with memory (i.e. SequencerMem) then:
+* Call Tick.exit_tree(root, result) after execution
+* Use TreeRunner.exe(tick) which will do so automatically
 
 Result constants are defined in the BTNode class (SUCCESS, FAILURE, RUNNING).
 
 ## Later...
 
-* Conditional, Action Nodes
-* More Decorators
-* Documentation
-* More Examples
-* Logger
-* Godot Node wrappers for BTNode/s
-* Graph editor
-* FSM (Basic, Stack, Hierarchical)
-* Generated trees (GOAP, PPA)
-* Tests
-* JSON saving/loading
+- [ ] Conditional, Action Nodes
+- [ ] More Decorator Types
+- [ ] Save/load tree
+- [ ] Documentation
+- [ ] More Examples
+- [ ] Logger + GUI
+- [ ] Generated trees (GOAP, PPA)
+- [ ] Tests
