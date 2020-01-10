@@ -3,9 +3,9 @@
 An addon for writing behavior trees in GDScript.
 Written in Godot 3.1.
 
-Influenced by https://github.com/godot-addons/godot-behavior-tree-plugin.
-
-Also [Behavior Trees in Robotics and AI](https://arxiv.org/pdf/1709.00084.pdf)
+## Influences
+* https://github.com/godot-addons/godot-behavior-tree-plugin
+* [Behavior Trees in Robotics and AI](https://arxiv.org/pdf/1709.00084.pdf)
 
 ## Philosophy
 
@@ -73,7 +73,8 @@ If you are going to use composites with memory (i.e. SequencerMem) then:
 
 - [x] Save/load
 - [x] Conditional, Action Node types
-- [ ] Decorator type
+- [x] Decorator type
 - [ ] Logger/Tree-debugging
 - [ ] Documentation
 - [ ] Tree Generation (GOAP, PPA)
+- [ ] Resume from last running node

@@ -6,6 +6,6 @@
 .import/
 NOTES.txt
 addons/GDBehavior/Composite/ParallelSimple.gd
-addons/GDBehavior/Decorator
+addons/GDBehavior/Decorator/MeetsConditionsCount.gd
 # default_env.tres
 tests/

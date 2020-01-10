@@ -13,3 +13,4 @@ func exe(tick:Tick):
 	tick.enter_tree(root)
 	var result = root.exe(tick)
 	tick.exit_tree(root, result)
+	return result
