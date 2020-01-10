@@ -52,6 +52,8 @@ func _close(tick):
 func _should_close(result):
 	return result != RUNNING
 	
+# ========================================
+
 func to_dict():
 	return {}
 	

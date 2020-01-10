@@ -67,13 +67,17 @@ class GotoRandom:
 		tick.actor.target = random_pos()
 
 	func _exe(tick):
+		var acc = tick.delta * spd
 		var d = tick.actor.target - tick.actor.position
-		if d.length() < stop_dist:
+		if d.length() < acc:
+			tick.actor.position = tick.actor.target
 			return SUCCESS
 		else:
-			var vel = d.normalized() * tick.delta * spd
-			tick.actor.position += vel.round()
+			var vel = d.normalized() * acc
+			tick.actor.position += vel
 		return RUNNING
+		
+		
 				
 	func random_pos():
 		var x = randf() * area.x
@@ -185,7 +189,7 @@ func setup_actor_goto():
 			StopSpeaking.new()])])
 			
 	var goto = SeqMem.new([
-		GotoRandom.new(vp_sz, 80.0),
+		GotoRandom.new(vp_sz, 120.0),
 		WaitDelta.new(2.0),
 		ColorRandom.new()])
 		

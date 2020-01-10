@@ -93,7 +93,8 @@ static func from_data(data):
 				children.append(nodes[nodes.size()-j])
 			# TODO: shouldn't rely on single argument constructors for composites
 			# At the least, all nodes should have arg-less constructor			
-			node = script.new(children).from_dict(nd_data) # .with_children(children)?
+			node = script.new().from_dict(nd_data) # .with_children(children)?
+			node.set_children(children)
 		else:
 			node = script.new().from_dict(nd_data)
 		node.name = nd_data.name

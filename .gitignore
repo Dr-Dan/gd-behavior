@@ -7,3 +7,5 @@
 NOTES.txt
 addons/GDBehavior/Composite/ParallelSimple.gd
 addons/GDBehavior/Decorator
+# default_env.tres
+tests/

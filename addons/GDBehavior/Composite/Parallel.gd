@@ -4,7 +4,7 @@ extends "res://addons/GDBehavior/Base/BTComposite.gd"
 # fails if n_failed > n_children - success_count
 var success_count: int
 
-func _init(children:Array, success_count:int=1).(children, "parallel"):
+func _init(children:Array=[], success_count:int=1).(children, "parallel"):
 	self.success_count = min(success_count, children.size())
 	
 func _exe(tick):

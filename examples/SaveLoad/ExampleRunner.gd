@@ -4,8 +4,6 @@ extends Node2D
 An example showing the save system. 
 Note that nodes need to be defined in seperate files as the script-path needs to be saved.
 Also if a file is moved or renamed post-save, loading will fail.
-
-Currently cannot load/save decorators.
 """
 
 # ================================================================		
@@ -43,6 +41,7 @@ const Speak = preload("res://examples/SaveLoad/Actions/SayRandom.gd")
 const StopSpeaking = preload("res://examples/SaveLoad/Actions/StopSpeaking.gd")
 const Print = preload("res://examples/SaveLoad/Actions/Print.gd")
 
+const MeetsCond = preload("res://addons/GDBehavior/Decorator/MeetsConditions.gd")
 const AlwaysCond = preload("res://examples/SaveLoad/Actions/AlwaysCondition.gd")
 
 const SaveLoad = preload("res://addons/GDBehavior/SaveLoad.gd")
@@ -60,39 +59,37 @@ func setup_actor_goto():
 		a.position = Vector2(randf() * vp_sz.x, randf() * vp_sz.y)
 	
 	var goto = SeqMem.new([
-			AlwaysCond.new(true),
-			GotoRandom.new(vp_sz, 400.0),
-			Wait.new(1.0)])
+		GotoRandom.new(vp_sz, 400.0),
+		Wait.new(1.0)])
 		
 	var speak = SeqMem.new([
-		Speak.new(),
+		MeetsCond.new(
+			Speak.new(), [AlwaysCond.new(true)]),
 		Wait.new(2.0),
 		StopSpeaking.new(),
-		Wait.new(3.0),
-		Print.new("I will now speak...")])
+		Wait.new(3.0),		
+		])
 		
 	var root = Parallel.new([goto, speak], 2)
 		
-	# Note: 'children' indexes are saved as offset from parent for loading convenience
-	print("\nSAVED TREE")
 	var data_save = SaveLoad.to_data(root)
-	for d in data_save:
-		print(d)
-
 	root = SaveLoad.from_data(data_save)
-	var data_load = SaveLoad.to_data(root)
-	print("\nLOADED TREE")
-	for d in data_load:
-		print(d)
-	print("\n")
 	
+	var data_load = SaveLoad.to_data(root)
+		
+	for i in range(data_save.size()):
+		for key in data_save[i]:
+			assert(data_save[i][key] == data_load[i][key])
+				
 	var test_filename = "bt_save_test"
 	var saved = SaveLoad.save_tree(root, test_filename)
 	assert(saved)
 	var root_loaded = SaveLoad.load_tree(test_filename)
+	assert(root_loaded)
 	var destroyed = SaveLoad.delete_tree(test_filename)
 	assert(destroyed)
 	tree_runner = BTRunner.new(root_loaded)
+
 
 func test_actor_goto(delta):
 	for t in ticks:

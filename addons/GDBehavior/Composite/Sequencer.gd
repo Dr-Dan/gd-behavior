@@ -1,6 +1,6 @@
 extends "res://addons/GDBehavior/Base/BTComposite.gd"
 
-func _init(children:Array).(children, "sequencer"):
+func _init(children:Array=[]).(children, "sequencer"):
 	pass
     
 func _exe(tick):
