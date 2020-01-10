@@ -29,13 +29,14 @@ var seq = GDBehavior.Composites.Sequencer.new(children)
 ```
 ## Usage
 
+[Examples](https://github.com/Dr-Dan/gd-behavior/blob/master/examples)
+
 Result constants are defined in the BTNode class (SUCCESS, FAILURE, RUNNING).
 
-```gdscript
-const GDB = preload("res://addons/GDBehavior/GDBehavior.gd")
-const Tick = preload("res://addons/GDBehavior/Tick.gd")
+Base node types (Action, Conditional, Composite, Decorator) are in GDBehavior/Base folder.
 
-# define an action
+### A Simple Action
+```gdscript
 class Print:
 	extends "res://addons/GDBehavior/Base/BTAction.gd"
 	var msg
@@ -45,22 +46,13 @@ class Print:
 
     func _exe(tick):
         print(msg)
-
-const Seq = preload("res://addons/GDBehavior/Composite/Sequencer.gd")
-var tick = Tick.new()
-func print_hello_world():
-    var root = Seq.new([Print.new("Hello"), Print.new("World!")])
-    var tree_runner = BTRunner.new(root)
-    
-    # prints "Hello", "World!"; result = BTNode.SUCCESS
-    var result = tree_runner.exe(tick)
-    
-    # root.exe(tick) # would also work as no memory is required
-    # tick.exit_tree(root, result) # will clear memory if required
-    
+        return SUCCESS
 ```
 
-[Examples](https://github.com/Dr-Dan/gd-behavior/blob/master/examples)
+Override the _exe function to apply an action's effects then return a result on completion.
+
+_open, _closed, _enter, _exit functions are also inherited from BTAction<-BTNode
+
 
 If you are going to use composites with memory (i.e. SequencerMem) then:
 * Call Tick.exit_tree(root, result) after each pass of the tree.
@@ -74,7 +66,7 @@ If you are going to use composites with memory (i.e. SequencerMem) then:
 - [x] Save/load
 - [x] Conditional, Action Node types
 - [x] Decorator type
-- [ ] Logger/Tree-debugging
+- [ ] Logger
 - [ ] Documentation
 - [ ] Tree Generation (GOAP, PPA)
 - [ ] Resume from last running node
