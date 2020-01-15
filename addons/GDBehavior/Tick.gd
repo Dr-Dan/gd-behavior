@@ -11,10 +11,12 @@ func exit_tree(root, result):
 	if result != BTNode.RUNNING:
 		exit_running()
 		
-# called immediately after a node has executed		
-func exe(node, result):
+func exe(node):
 	pass
 	
+func on_result(node, result):
+	pass
+
 func enter(node):
 	pass
 	

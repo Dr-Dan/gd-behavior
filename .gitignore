@@ -4,8 +4,8 @@
 
 # Godot-specific ignores
 .import/
-NOTES.txt
 addons/GDBehavior/Composite/ParallelSimple.gd
 addons/GDBehavior/Decorator/MeetsConditionsCount.gd
+examples/logger
 # default_env.tres
 tests/

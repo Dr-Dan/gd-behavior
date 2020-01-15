@@ -16,9 +16,10 @@ func exe(tick):
 		tick.open(self)
 		_open(tick)
 
+	tick.exe(self) 
 	var result = _exe(tick)
 	assert(result != null) # Did you remember to return a result?..
-	tick.exe(self, result) 
+	tick.on_result(self, result) 
 	
 	if _should_close(result):
 		tick.close(self)

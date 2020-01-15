@@ -1,6 +1,6 @@
 extends "res://addons/GDBehavior/Base/BTComposite.gd"
 
-func _init(children:Array=[]).(children, "selector"):
+func _init(children:Array=[]).(children, "selector-memory"):
 	pass
 	
 func _open(tick):
