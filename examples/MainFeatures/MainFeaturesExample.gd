@@ -2,7 +2,6 @@ extends Node2D
 
 """
 An example where actors walk around and say something if within range.
-Nodes are defined in script for tutorial purposes. This is not a requirement.
 """
 
 # ================================================================		
@@ -119,10 +118,25 @@ class SayRandom:
 		tick.actor.speech = gr[i]
 		return SUCCESS
 
+
+# ================================================================		
 # CONDITIONALS
-				
+const BTCondition = preload("res://addons/GDBehavior/Base/BTCondition.gd")
+
+# work similarly to BTAction except _validate is overriden instead of _exe
+# unlike _exe; _validate returns a bool
+class AlwaysCondition:
+	extends BTCondition
+	var value:bool
+
+	func _init(value:bool).("is speaking?"):
+		self.value = value
+
+	func _validate(tick):
+		return value	
+			
 class ActorInRange:
-	extends BTAction
+	extends BTCondition
 	
 	var distance: float
 	var actors = []
@@ -131,23 +145,24 @@ class ActorInRange:
 		self.distance = distance
 		self.actors = actors
 
-	func _exe(tick):
+	func _validate(tick):
 		for a in actors:
 			if a == tick.actor: continue
 			if tick.actor.position.distance_to(a.position) < distance:
-				return SUCCESS
-		return FAILURE
+				return true
+		return false
 		
 class IsSpeaking:
-	extends BTAction
+	extends BTCondition
 
 	func _init().("is speaking?"):
 		pass
 
-	func _exe(tick):
+	func _validate(tick):
 		if tick.actor.speech != "":
-			return SUCCESS
-		return FAILURE
+			return true
+		return false
+	
 				
 # ================================================================		
 
@@ -163,9 +178,11 @@ const BTRunner = preload("res://addons/GDBehavior/TreeRunner.gd")
 const Composites = preload("res://addons/GDBehavior/Composites.gd")
 const Decorators = preload("res://addons/GDBehavior/Decorators.gd")
 const SeqMem = Composites.SequencerMem
-const SelMem = Composites.SelectorMem
 const Parallel = Composites.Parallel
 const Succeeder = Decorators.Succeeder
+
+const MultiCondition = Decorators.MultiCondition
+const Invert = Decorators.Invert
 
 onready var actors = $Actors.get_children()
 
@@ -180,23 +197,29 @@ func setup_actor_goto():
 		a.position = Vector2(randf() * vp_sz.x, randf() * vp_sz.y)
 	
 	# Setup behaviours
-	var speak = SelMem.new([
-		IsSpeaking.new(),
-		SeqMem.new([
-			ActorInRange.new(80.0, actors),
-			SayRandom.new(),
-			WaitDelta.new(2.5),
-			StopSpeaking.new()])])
+	var speak = SeqMem.new([
+		# Multi-Condition decorator
+		MultiCondition.new(
+			# if all return SUCCESS
+			[Invert.new(IsSpeaking.new()), ActorInRange.new(80.0, actors)],	
+			# do this. (can be any type of node.)
+			SayRandom.new()), 
+		WaitDelta.new(2.5),
+		StopSpeaking.new()
+	])
 			
 	var goto = SeqMem.new([
 		GotoRandom.new(vp_sz, 120.0),
 		WaitDelta.new(2.0),
-		ColorRandom.new()])
+		ColorRandom.new()
+	])
 		
+	# Succeeder will stop any FAILUREs from interrupting parallel node
+	# a RUNNING result will still get through however
 	var root = Parallel.new([Succeeder.new(speak), goto], 2)
 	tree_runner = BTRunner.new(root)
 	
-# Note: this could also be handled from each actor's _process(delta) function
+# Note: here for convenience. This can also be handled from each actor's _process(delta) function
 func test_actor_goto(delta):
 	for t in ticks:
 		t.delta = delta

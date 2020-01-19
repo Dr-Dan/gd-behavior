@@ -19,4 +19,4 @@ const Parallel = Composites.Parallel
 
 const Succeeder = Decorators.Succeeder
 const Invert = Decorators.Invert
-const MeetsConditions = Decorators.MeetsConditions
+const MultiCondition = Decorators.MultiCondition

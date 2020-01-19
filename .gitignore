@@ -6,6 +6,7 @@
 .import/
 addons/GDBehavior/Composite/ParallelSimple.gd
 addons/GDBehavior/Decorator/MeetsConditionsCount.gd
+addons/GDBehavior/TickLogging.gd
 examples/logger
 # default_env.tres
 tests/
