@@ -12,7 +12,7 @@ func _init(name:String):
 func exe(tick):
 	tick.enter(self)
 	
-	if not self in tick.running:
+	if not tick.is_running(self):
 		tick.open(self)
 		_open(tick)
 

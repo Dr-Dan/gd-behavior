@@ -21,7 +21,7 @@ class Print:
 
 	func _exe(tick):
 		print(msg)
-		# !!! don't forget to return a result !!!
+		# NOTE: don't forget to return a result
 		return SUCCESS 
 
 

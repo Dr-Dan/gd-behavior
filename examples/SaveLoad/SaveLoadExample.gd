@@ -77,8 +77,8 @@ func setup_behavior():
 	# this is all handled in SaveLoad class and is not a necessary step.
 	var data_save = Utils.to_data(root)
 	
-	print("-ACTIONS-")
-	print(data_save.actions)
+	print("-NODES-")
+	print(data_save.nodes)
 	print("-NODE DATA-")
 	print(data_save.tree)
 	

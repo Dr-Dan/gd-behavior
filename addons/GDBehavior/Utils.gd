@@ -7,7 +7,7 @@ static func get_nodes_dfs(root:Composite):
 			nodes += get_nodes_dfs(c)
 		else:
 			nodes.append(c)
-			    
+				
 	return nodes
 	
 # result.children is the offset from parent to child not absolute position in data
@@ -51,11 +51,11 @@ static func to_data(root:Composite):
 		i+=1
 		result.append(nd_data)
 
-	return {tree=result, actions=actions}
+	return {tree=result, nodes=actions}
 
 static func from_data(data):
 	var nodes = []
-	var actions = data.actions
+	var actions = data.nodes
 	for i in range(data.tree.size()-1, -1, -1):
 		var nd_data = data.tree[i]
 		var script = load(actions[nd_data.name])

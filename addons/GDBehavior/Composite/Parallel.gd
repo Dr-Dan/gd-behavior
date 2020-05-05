@@ -23,7 +23,6 @@ func _exe(tick):
 		result = SUCCESS
 	elif fail > children.size() - success_count:
 		result = FAILURE
-		return result	
 	return result
 	
 func to_dict():

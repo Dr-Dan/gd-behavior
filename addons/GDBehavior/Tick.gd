@@ -33,3 +33,6 @@ func exit_running():
 	for n in running:
 		n._exit(self)		
 	running = {}	
+	
+func is_running(node):
+	return node in running
