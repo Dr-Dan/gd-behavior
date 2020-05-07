@@ -1,0 +1,30 @@
+
+TODO:
+	
+	store connection data in node?
+		evaluate
+
+	build BT
+		save 
+			to json?
+
+	use window/panel instead of fancy options on nodes?
+		selected info
+		
+	tool/editor panel
+		
+	context 
+		headings
+		differentiate between node and empty space
+	
+	Separate to ez-graph addon
+		set context created types and scenes using export dict
+		flexinode: 
+			number of in/out
+				start
+				min/max
+			
+		RF 
+			Composite into InOut node
+			Root OutNode
+			Leaf InNode

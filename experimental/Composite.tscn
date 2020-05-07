@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://experimental/Composite.gd" type="Script" id=1]
+
+[node name="GraphNode4" type="GraphNode"]
+margin_left = 440.0
+margin_top = 190.0
+margin_right = 546.0
+margin_bottom = 253.0
+mouse_filter = 1
+title = "Composite"
+offset = Vector2( 400, 150 )
+resizable = true
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
