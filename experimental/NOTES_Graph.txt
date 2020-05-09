@@ -1,30 +1,76 @@
 
 TODO:
 	
-	store connection data in node?
-		evaluate
+	refactor
+		utilities or graph-system
 
+	register types
+		dict + graph_node as elem
+		graph_node:
+			connection_type
+				ONE_TO_MANY or MANY_TO_MANY
+				can use this to validate add_output
+			number of in/out
+				start
+				min/max
+				
+		do not use 'is Composite' in GraphEdit
+			nd.has_multiple_outputs() > 1
+				or nd.max_out > 1
+			get_link_count(nd) < nd.max_out
+	
 	build BT
-		save 
-			to json?
+		save - graph-data, as BT data; dfs?
+			already have BT saver just need to translate to format
+		load - to graph, as BT
+				
+	sort out context menu
+		categories
+		from data
+			add_type(script, name)
+			
+	test
+		dis/connect
+		reorder
+		save/load
 
 	use window/panel instead of fancy options on nodes?
 		selected info
 		
 	tool/editor panel
 		
-	context 
-		headings
-		differentiate between node and empty space
+	context menu
+		differentiate between node and empty space pressed
 	
 	Separate to ez-graph addon
-		set context created types and scenes using export dict
-		flexinode: 
-			number of in/out
+		composite
+			output types - not responsibility of node... is graph
+				many to many
+				one to many
+			
+			number of in/out - child class
 				start
 				min/max
-			
-		RF 
-			Composite into InOut node
-			Root OutNode
-			Leaf InNode
+				
+			insert slot at idx
+			renumber label idx/s on add
+			separate idx input/output
+
+
+LATER:
+	optional outputs (layers?)
+		to tick
+		utility
+		
+	strange nodes:
+		viewport
+		debug/inspect
+	
+DONE:
+	simplified node functions
+		set slot
+		root, composite, leaf
+	auto-add outputs to composite
+	get outputs from a node
+	reorder children on disconnect
+	y sort children on drag

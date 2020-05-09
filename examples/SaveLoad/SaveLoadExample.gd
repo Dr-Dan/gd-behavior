@@ -76,11 +76,11 @@ func setup_behavior():
 	# to_data returns a dictionary of tree data and actions
 	# this is all handled in SaveLoad class and is not a necessary step.
 	var data_save = Utils.to_data(root)
-	
-	print("-NODES-")
-	print(data_save.nodes)
-	print("-NODE DATA-")
-	print(data_save.tree)
+	print(data_save)
+#	print("-NODES-")
+#	print(data_save.nodes)
+#	print("-NODE DATA-")
+#	print(data_save.tree)
 	
 	# returns the root of a tree generated from 'data_save'
 	root = Utils.from_data(data_save)

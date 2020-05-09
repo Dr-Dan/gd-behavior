@@ -1,20 +1,46 @@
 extends GraphNode
 
-enum Side{
-	Right,
-	Left
-}
-
 const EMPTY = {
-	enabled=false, 
-	type=-1, 
+	enabled=false,
+	type=-1,
 	color=Color.white}
 
-# could be better kept externally??
-var links = []
+#var type = ""
 
-func slot_count():
-	return get_child_count()
+func add_input():
+	var lbl_out = Label.new()
+	lbl_out.text = str(slot_count()-1)
+	lbl_out.align = Label.ALIGN_LEFT
+	add_item(
+		lbl_out,
+		{
+			left={type=0, color=Color.white},
+		})
+
+func add_output():
+	var lbl_out = Label.new()
+	lbl_out.text = str(slot_count()-1)
+	lbl_out.align = Label.ALIGN_RIGHT
+	add_item(
+		lbl_out,
+		{
+			right={type=0, color=Color.white},
+		})
+
+func remove_output(idx):
+	var n0 = get_child(idx+1)
+	var n1 = get_child(idx+2)
+	n1.text = n0.text
+	
+	remove_child(n1)
+	clear_slot(idx+2)
+
+# TODO: should clear all or take min_idx
+func clear_outputs():
+	for i in range(slot_count()-1, 1, -1):
+		var ch = get_child(i)
+		remove_child(ch)
+		ch.queue_free()
 
 func add_item(control, data={}, idx=-1):
 	if idx == -1:
@@ -42,9 +68,6 @@ func _set_slot_data(idx, data={}):
 		idx,
 		l.enabled, l.type, l.color,
 		r.enabled, r.type, r.color)
-		
-	links.append(data)
-	
-func clear_slot(idx):
-	.clear_slot(idx)
-	links.remove(idx)
+
+func slot_count():
+	return get_child_count()
