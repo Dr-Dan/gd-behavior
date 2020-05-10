@@ -1,27 +1,14 @@
 
 TODO:
-	
-	refactor
-		utilities or graph-system
+	bt graph - extend current graph
+		reg_action, seq, deco
+		graph.add_action("print", "Print", {msg = TYPE_STRING})
+			no bt nodes in graph
 
-	register types
-		dict + graph_node as elem
-		graph_node:
-			connection_type
-				ONE_TO_MANY or MANY_TO_MANY
-				can use this to validate add_output
-			number of in/out
-				start
-				min/max
-				
-		do not use 'is Composite' in GraphEdit
-			nd.has_multiple_outputs() > 1
-				or nd.max_out > 1
-			get_link_count(nd) < nd.max_out
-	
 	build BT
-		save - graph-data, as BT data; dfs?
-			already have BT saver just need to translate to format
+		save - graph-data, as BT data; 
+			already have BT saver just need to translate graph to format
+				dfs
 		load - to graph, as BT
 				
 	sort out context menu
@@ -29,6 +16,13 @@ TODO:
 		from data
 			add_type(script, name)
 			
+	delete selected
+	
+	copy/paste
+		paste
+			at mouse?
+			last or next click pos
+
 	test
 		dis/connect
 		reorder
@@ -66,6 +60,11 @@ LATER:
 		viewport
 		debug/inspect
 	
+REPORT:
+	does not inform of multiple nodes selected, dragged
+		get_selected() or drag select event
+			or access to drag box
+			
 DONE:
 	simplified node functions
 		set slot
