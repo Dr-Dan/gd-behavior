@@ -1,21 +1,12 @@
 
 TODO:
-	bt graph - extend current graph
-		reg_action, seq, deco
-		graph.add_action("print", "Print", {msg = TYPE_STRING})
-			no bt nodes in graph
-
 	build BT
+		need to store BTNode file and link to node-type
+		
 		save - graph-data, as BT data; 
 			already have BT saver just need to translate graph to format
-				dfs
 		load - to graph, as BT
 				
-	sort out context menu
-		categories
-		from data
-			add_type(script, name)
-			
 	delete selected
 	
 	copy/paste
@@ -50,6 +41,11 @@ TODO:
 			renumber label idx/s on add
 			separate idx input/output
 
+	enhanced snap
+		larger grid
+		no overlap
+
+	align selected: x, y
 
 LATER:
 	optional outputs (layers?)
@@ -59,6 +55,10 @@ LATER:
 	strange nodes:
 		viewport
 		debug/inspect
+
+	connect one2many
+	connect mode
+		drag from anywhere on body
 	
 REPORT:
 	does not inform of multiple nodes selected, dragged

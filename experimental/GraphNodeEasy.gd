@@ -11,7 +11,10 @@ const EMPTY = {
 	type=-1,
 	color=Color.white}
 
-#var type = ""
+var type = ""
+# represent args that have been set, possible args are stored in graph
+var args = {}
+
 var max_out = 0
 var max_in = 0
 #var conn_type = ConnectType.None

@@ -3,26 +3,10 @@ extends GraphEdit
 onready var context_menu = get_parent().get_node("PopupMenu")
 
 # holds data on addable graph nodes
-var graph_nodes = []
 # currently selected node
 var selected:Node
 
-func add_node_type(data:Dictionary):
-	graph_nodes.append(data)
-	context_menu.add_item(data.dname)
-	
 func _ready():
-	for i in graph_nodes:
-#		var subsubmenu = PopupMenu.new()
-#		subsubmenu.set_name(i.sub)
-#		subsubmenu.add_item(i.dname)
-#		context_menu.add_child(subsubmenu)
-#		context_menu.add_submenu_item(i.dname, i.sub)
-#		for c in graph_nodes[i]:
-#		context_menu.add_separator(i.sub)
-		context_menu.add_item(i.dname)
-	context_menu.connect("index_pressed", self, "_context_item_pressed")
-	
 	connect("connection_request", self, "_connect_nodes")
 	connect("disconnection_request", self, "_disconnect_nodes")
 	connect("popup_request", self, "_popup")
@@ -30,9 +14,10 @@ func _ready():
 	connect("node_selected", self, "_on_node_selected")
 			
 # BUG: this fails if reconnecting before release
-func _input(event):
-	if event is InputEventKey and not event.pressed and  event.scancode == KEY_A:
-		print(get_connection_list())
+# func _input(event):
+# 	if event is InputEventKey and not event.pressed and  event.scancode == KEY_A:
+# 		print(get_connection_list())
+# #		print(get_children())
 		
 ###############################################################
 # SIGNAL EVENTS
@@ -55,10 +40,8 @@ func _popup(pos):
 	context_menu.rect_position = pos
 	context_menu.popup()
 
-func _context_item_pressed(i):
-	var nd = graph_nodes[i].scn.instance()
-	nd.offset = context_menu.rect_position
-	add_child(nd)
+# func _context_item_pressed(i):
+# 	pass
 	
 func _on_node_moved():
 #	var p = get_parent_name(selected)

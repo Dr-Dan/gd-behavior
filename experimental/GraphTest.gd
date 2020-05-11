@@ -24,15 +24,20 @@ class Print:
 	func to_dict():
 		return {msg=msg}
 		
-const nodes = [
-	{node_name="composite", sub_cat="Composites", dname="Composite", scn=preload("res://experimental/Composite.tscn")},
-	{node_name="decorator", sub_cat="Decorators", dname="Decorator", scn=preload("res://experimental/Decorator.tscn")},
-	{node_name="leaf", sub_cat="Leaves", dname="Leaf", scn=preload("res://experimental/Leaf.tscn")}
-]
+# const nodes = [
+# 	{node_name="composite", sub_cat="Composites", dname="Composite", scn=preload("res://experimental/Composite.tscn")},
+# 	{node_name="decorator", sub_cat="Decorators", dname="Decorator", scn=preload("res://experimental/Decorator.tscn")},
+# 	{node_name="leaf", sub_cat="Leaves", dname="Leaf", scn=preload("res://experimental/Leaf.tscn")}
+# ]
 
 onready var graph = $GraphEdit
 
 func _ready():
-#	graph.add_action("print", "Print", {msg = TYPE_STRING})
-	for n in nodes:
-		graph.add_node_type(n)
+
+	graph.add_leaf("leaf", "Leaf")
+	# graph.add_leaf("print", "Print", {msg=TYPE_STRING})
+
+	graph.add_composite("comp", "Composite")
+
+	graph.add_decorator("deco", "Decorator")
+	

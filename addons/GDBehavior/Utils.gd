@@ -63,6 +63,7 @@ static func from_data(data):
 		if "children" in nd_data:
 			var children = []
 			for j in nd_data.children:
+				# current node is last added
 				children.append(nodes[nodes.size()-j])
 			node = script.new().from_dict(nd_data)
 			node.set_children(children)
