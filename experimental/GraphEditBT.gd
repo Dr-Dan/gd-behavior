@@ -47,32 +47,27 @@ func _menu_item_pressed(i, type):
 		nd.offset = context_menu.rect_position
 		add_child(nd)
 		nd.type = node_types[type][i].node_name
-
-# func get_default(primitive_type):
-# 	match primitive_type:
-# 		TYPE_STRING:
-# 			return ""
-# 		TYPE_INT:
-# 			return 0
-func _input(event):
-	if event is InputEventKey and not event.pressed and  event.scancode == KEY_A:
-		var r = get_nodes_dfs_data(get_root_connection().to)
-		for i in r:
-			print(i)
-#		print(r[0].children[0].name)
-		# print(get_connection_list())
+		nd.args_export = node_types[type][i].args_export.duplicate()
+		nd.args_type = node_types[type][i].args_type.duplicate()
 		
-func add_leaf(node_name, display_name, args={}):
+func create_node(cls, type, offset=Vector2()):
+	pass
+
+
+func add_leaf(node_name, display_name, args_type={}, args_export={}):
 	context_menus["leaves"].add_item(display_name)
-	node_types["leaves"].append({node_name=node_name, display_name=display_name, args=args})
+	node_types["leaves"].append({
+		node_name=node_name, display_name=display_name, args_type=args_type, args_export=args_export})
 	
-func add_composite(node_name, display_name, args={}):
+func add_composite(node_name, display_name, args_type={}, args_export={}):
 	context_menus["composites"].add_item(display_name)
-	node_types["composites"].append({node_name=node_name, display_name=display_name, args=args})
+	node_types["composites"].append({
+		node_name=node_name, display_name=display_name, args_type=args_type, args_export=args_export})
 	
-func add_decorator(node_name, display_name, args={}):
+func add_decorator(node_name, display_name, args_type={}, args_export={}):
 	context_menus["decorators"].add_item(display_name)
-	node_types["decorators"].append({node_name=node_name, display_name=display_name, args=args})
+	node_types["decorators"].append({
+		node_name=node_name, display_name=display_name, args_type=args_type, args_export=args_export})
 	
 func get_nodes_dfs(root):
 	var nodes = [get_node(root)]
@@ -89,7 +84,7 @@ func get_nodes_dfs(root):
 # result.children_ids is the offset from parent to child not absolute position in data
 func get_nodes_dfs_data(root, i=[0]):
 	var node = get_node(root)
-	var nodes = [{index=i[0], node_name=node.type, args=node.args, children_nodes=[], children=[]}]
+	var nodes = [{index=i[0], name=node.type, args_export=node.args_export, args_type=node.args_type, children_nodes=[], children=[]}]
 	var temp_i = i[0]
 	for c in get_links_out(root):
 		i[0] += 1
@@ -97,9 +92,9 @@ func get_nodes_dfs_data(root, i=[0]):
 		nodes[0].children_nodes.append(get_node(c.to))
 		var next = get_node(c.to)
 		if next is LeafType:
-			nodes.append({index=i[0], node_name=next.type, args=node.args})
+			nodes.append({index=i[0], name=next.type, args_export=next.args_export, args_type=node.args_type})
 		else:
-			nodes += get_nodes_dfs_data(c.to)
+			nodes += get_nodes_dfs_data(c.to, i)
 
 	return nodes
 	

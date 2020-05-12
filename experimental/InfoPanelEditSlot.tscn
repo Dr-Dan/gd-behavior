@@ -1,0 +1,37 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://experimental/InfoPanelEditSlot.gd" type="Script" id=1]
+
+[node name="PanelContainer" type="PanelContainer"]
+margin_top = 32.0
+margin_right = 286.0
+margin_bottom = 66.0
+size_flags_horizontal = 3
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Slot" type="HBoxContainer" parent="."]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 279.0
+margin_bottom = 27.0
+rect_min_size = Vector2( 0, 20 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="Label" type="Label" parent="Slot"]
+margin_top = 3.0
+margin_right = 134.0
+margin_bottom = 17.0
+size_flags_horizontal = 3
+text = "Key"
+
+[node name="TextEdit" type="TextEdit" parent="Slot"]
+margin_left = 138.0
+margin_right = 272.0
+margin_bottom = 20.0
+size_flags_horizontal = 3
+context_menu_enabled = false

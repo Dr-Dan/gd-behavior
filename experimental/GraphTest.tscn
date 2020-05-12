@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://experimental/Root.gd" type="Script" id=1]
 [ext_resource path="res://experimental/GraphEditBT.gd" type="Script" id=2]
 [ext_resource path="res://experimental/GraphTest.gd" type="Script" id=3]
 [ext_resource path="res://experimental/GraphContextPopup.gd" type="Script" id=4]
+[ext_resource path="res://experimental/GraphInfoPanel.gd" type="Script" id=5]
 
 [node name="Control" type="Control"]
 anchor_right = 1.0
@@ -44,3 +45,36 @@ script = ExtResource( 4 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+
+[node name="InfoPanel" type="PanelContainer" parent="."]
+anchor_top = 1.0
+anchor_bottom = 1.0
+margin_top = -220.0
+margin_right = 300.0
+margin_bottom = -20.0
+script = ExtResource( 5 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="VBoxContainer" type="VBoxContainer" parent="InfoPanel"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 293.0
+margin_bottom = 193.0
+
+[node name="Heading" type="PanelContainer" parent="InfoPanel/VBoxContainer"]
+margin_right = 286.0
+margin_bottom = 28.0
+
+[node name="Label" type="Label" parent="InfoPanel/VBoxContainer/Heading"]
+margin_left = 7.0
+margin_top = 7.0
+margin_right = 279.0
+margin_bottom = 21.0
+text = "Print"
+
+[node name="Slots" type="HBoxContainer" parent="InfoPanel/VBoxContainer"]
+margin_top = 32.0
+margin_right = 286.0
+margin_bottom = 32.0

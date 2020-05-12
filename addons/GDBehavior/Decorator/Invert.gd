@@ -1,6 +1,6 @@
 extends "res://addons/GDBehavior/Base/BTDecorator.gd"
 
-func _init(child=null).(child, "invert decorator"):
+func _init(child=null).(child, "invert"):
 	pass
 	
 func _exe(tick):
@@ -10,4 +10,4 @@ func _exe(tick):
 	elif r == FAILURE:
 		return SUCCESS
 	return RUNNING
-       
+	   

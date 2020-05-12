@@ -1,13 +1,24 @@
 
 TODO:
+
+	Invert not working correctly with AlwaysCondition
+		storing incorrectly?
+
 	build BT
-		need to store BTNode file and link to node-type
-		
-		save - graph-data, as BT data; 
-			already have BT saver just need to translate graph to format
+		save
 		load - to graph, as BT
+		+ gui
+		BT <-> Graph
 				
+	BTNode classes should inherit to/from_dict
+		is causing many mistakes
+		BTNodeGraphable?
+		or get/set externally?
+
+	start using asserts again
+
 	delete selected
+		disconnect parent and children
 	
 	copy/paste
 		paste
@@ -15,17 +26,24 @@ TODO:
 			last or next click pos
 
 	test
+		need to be able to connect easily via code
 		dis/connect
 		reorder
 		save/load
 
 	use window/panel instead of fancy options on nodes?
 		selected info
+
 		
 	tool/editor panel
 		
 	context menu
 		differentiate between node and empty space pressed
+		node menu:
+			delete, copy?, 
+			change type - delete, store link data and replace/relink
+		empty:
+			paste
 	
 	Separate to ez-graph addon
 		composite
@@ -60,10 +78,11 @@ LATER:
 	connect mode
 		drag from anywhere on body
 	
-REPORT:
+REPORT/RESEARCH:
 	does not inform of multiple nodes selected, dragged
 		get_selected() or drag select event
 			or access to drag box
+	node deselected event
 			
 DONE:
 	simplified node functions

@@ -12,8 +12,10 @@ const EMPTY = {
 	color=Color.white}
 
 var type = ""
+
 # represent args that have been set, possible args are stored in graph
-var args = {}
+var args_export = {}
+var args_type = {}
 
 var max_out = 0
 var max_in = 0
