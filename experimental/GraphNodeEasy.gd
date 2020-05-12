@@ -55,6 +55,8 @@ func add_output():
 			right={type=0, color=Color.white},
 		})
 
+# NOTE: this behaviour only applies to multi-output nodes
+# consider lifting this up to GraphNodeBT
 func remove_output(idx):
 	var n0 = get_child(idx+1)
 	var n1 = get_child(idx+2)

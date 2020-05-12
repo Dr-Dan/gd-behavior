@@ -10,3 +10,5 @@ addons/GDBehavior/TickLogging.gd
 examples/logger
 # default_env.tres
 tests/
+
+experimental/NOTES_Graph.txt

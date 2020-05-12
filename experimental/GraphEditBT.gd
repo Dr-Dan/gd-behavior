@@ -6,69 +6,73 @@ const Leaf = preload("res://experimental/Leaf.tscn")
 
 const LeafType = preload("res://experimental/Leaf.gd")
 
+const LEAF = "leaf"
+const COMPOSITE = "composite"
+const DECORATOR = "decorator"
+
 var graph_nodes = {}
 
-# TODO: move to context menu class
-var context_menus = {
-	leaves=null,
-	composites=null,
-	decorators=null
-}
-
 var node_types = {
-	leaves=[],
-	composites=[],
-	decorators=[]
+	LEAF:[],
+	COMPOSITE:[],
+	DECORATOR:[]
 }
 
 
 func _ready():
-	context_menus["leaves"] = context_menu.create_submenu("leaves", "Leaves")
-	context_menus["composites"] = context_menu.create_submenu("composites", "Composites")
-	context_menus["decorators"] = context_menu.create_submenu("decorators", "Decorators")
+	context_menu.create_submenu(LEAF, "Leaves")
+	context_menu.create_submenu(COMPOSITE,"Composites")
+	context_menu.create_submenu(DECORATOR,"Decorators")
+	context_menu.connect("on_menu_item_chosen", self, "_menu_item_pressed")
 
-	for c in context_menus:
-		context_menus[c].connect("index_pressed", self, "_menu_item_pressed", [c])
+func _menu_item_pressed(submenu_name, submenu_idx):
+	var node_data = node_types[submenu_name][submenu_idx]
+	create_node(submenu_name, node_data, context_menu.rect_position)
 
-func _menu_item_pressed(i, type):
+func create_node(type, data, offset=Vector2()):
+	var nd = get_instance(type)
+	if nd != null:
+		nd.set_name(data.display_name)
+		nd.title = data.display_name
+		nd.offset = offset
+		nd.type = data.node_name
+		nd.args_export = data.args_export.duplicate()
+		nd.args_type = data.args_type.duplicate()
+		add_child(nd)
+		return nd
+	return null
+
+func get_instance(type):
 	var nd = null
 	match type:
-		"composites":
-			nd = Composite.instance()
-		"decorators":
-			nd = Decorator.instance()
-		"leaves":
+		LEAF:
 			nd = Leaf.instance()
+		COMPOSITE:
+			nd = Composite.instance()
+		DECORATOR:
+			nd = Decorator.instance()
+	return nd
+	
+func get_node_data(type, node_name):
+	for n in node_types[type]:
+		if n.node_name == node_name:
+			return n
+	return null
 
-	if nd != null:
-		var d = node_types[type][i].display_name
-		nd.set_name(d)
-		nd.title = d
-		nd.offset = context_menu.rect_position
-		add_child(nd)
-		nd.type = node_types[type][i].node_name
-		nd.args_export = node_types[type][i].args_export.duplicate()
-		nd.args_type = node_types[type][i].args_type.duplicate()
+func add_node_type(node_name, node_type, display_name, args_type={}, args_export={}):
+	context_menu.get_submenu(node_type).add_item(display_name)
+	node_types[node_type].append({
+		node_name=node_name, display_name=display_name, args_type=args_type, args_export=args_export})
 		
-func create_node(cls, type, offset=Vector2()):
-	pass
-
-
 func add_leaf(node_name, display_name, args_type={}, args_export={}):
-	context_menus["leaves"].add_item(display_name)
-	node_types["leaves"].append({
-		node_name=node_name, display_name=display_name, args_type=args_type, args_export=args_export})
-	
+	add_node_type(node_name, LEAF, display_name, args_type, args_export)
+
 func add_composite(node_name, display_name, args_type={}, args_export={}):
-	context_menus["composites"].add_item(display_name)
-	node_types["composites"].append({
-		node_name=node_name, display_name=display_name, args_type=args_type, args_export=args_export})
-	
+	add_node_type(node_name, COMPOSITE, display_name, args_type, args_export)
+
 func add_decorator(node_name, display_name, args_type={}, args_export={}):
-	context_menus["decorators"].add_item(display_name)
-	node_types["decorators"].append({
-		node_name=node_name, display_name=display_name, args_type=args_type, args_export=args_export})
-	
+	add_node_type(node_name, DECORATOR, display_name, args_type, args_export)
+
 func get_nodes_dfs(root):
 	var nodes = [get_node(root)]
 	var children = get_links_out(root)
