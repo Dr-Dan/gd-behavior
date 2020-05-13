@@ -27,5 +27,5 @@ func set_value(val):
 	value = val
 	next["value"] = val
 
-func _on_value_changed():
-	emit_signal("on_value_changed", value_edit.text)
+func _on_value_changed(text):
+	emit_signal("on_value_changed", text)

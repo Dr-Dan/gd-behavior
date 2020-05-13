@@ -17,15 +17,20 @@ func show_info(node):
 	for c in slots.get_children():
 		c.free()
 
-	for a in node.args_export:
+	for a in node.args_type:
 		var s = Slot.instance()
 		s.key = a
-		s.value = str(node.args_export[a])
+		if a in node.args_export:
+			s.value = str(node.args_export[a])
+		else:
+			s.value = ""
 		slots.add_child(s)
 		s.connect("on_value_changed", self, "_set_value", [a, node])
 		
 func _set_value(value, key, node):
-	node.args_export[key] = convert_input(value, node.args_type[key])
+	if is_instance_valid(node):
+		node.args_export[key] = convert_input(value, node.args_type[key])
+	# TODO: else refresh
 	# if node.set_export_arg(key, value):
 
 func convert_input(input:String, type):
