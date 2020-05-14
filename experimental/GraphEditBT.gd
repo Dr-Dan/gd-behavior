@@ -4,8 +4,6 @@ const Composite = preload("res://experimental/Composite.tscn")
 const Decorator = preload("res://experimental/Decorator.tscn")
 const Leaf = preload("res://experimental/Leaf.tscn")
 
-const LeafType = preload("res://experimental/Leaf.gd")
-
 const LEAF = "leaf"
 const COMPOSITE = "composite"
 const DECORATOR = "decorator"
@@ -18,19 +16,23 @@ var node_types = {
 	DECORATOR:[]
 }
 
+var save_btn
+var load_btn
 
-func clear_nodes():
-	clear_connections()
-	for nd in graph_nodes:
-		nd.queue_free()
-	graph_nodes.clear()
-	
 func _ready():
 	context_menu.create_submenu(LEAF, "Leaves")
 	context_menu.create_submenu(COMPOSITE,"Composites")
 	context_menu.create_submenu(DECORATOR,"Decorators")
 	context_menu.connect("on_menu_item_chosen", self, "_menu_item_pressed")
 
+	save_btn = Button.new()
+	save_btn.text = "Save"
+	get_zoom_hbox().add_child(save_btn)
+	
+	load_btn = Button.new()
+	load_btn.text = "Load"
+	get_zoom_hbox().add_child(load_btn)
+	
 func _menu_item_pressed(submenu_name, submenu_idx):
 	var node_data = node_types[submenu_name][submenu_idx]
 	create_node(submenu_name, node_data, context_menu.rect_position)
@@ -53,6 +55,11 @@ func create_node(type, data, offset=Vector2()):
 		return nd
 	return null
 
+func clear_nodes():
+	clear_connections()
+	for nd in graph_nodes:
+		nd.queue_free()
+	graph_nodes.clear()
 
 func get_instance(type):
 	var nd = null
@@ -71,10 +78,16 @@ func get_node_data(type, node_name):
 			return n
 	return null
 
+	
+func connect_nodes_easy(from:String, to:String):
+	_connect_nodes(from, count_links_out(from), to, 0)
+
+
 func add_node_type(node_name, node_type, display_name, args_type={}, args_export={}):
 	context_menu.get_submenu(node_type).add_item(display_name)
 	node_types[node_type].append({
 		node_name=node_name, display_name=display_name, args_type=args_type, args_export=args_export})
+		
 		
 func add_leaf(node_name, display_name, args_type={}, args_export={}):
 	add_node_type(node_name, LEAF, display_name, args_type, args_export)
@@ -85,12 +98,13 @@ func add_composite(node_name, display_name, args_type={}, args_export={}):
 func add_decorator(node_name, display_name, args_type={}, args_export={}):
 	add_node_type(node_name, DECORATOR, display_name, args_type, args_export)
 
+
 func get_nodes_dfs(root):
 	var nodes = [get_node(root)]
 	var children = get_links_out(root)
 	for c in children:
 		var next = get_node(c.to)
-		if next is LeafType:
+		if get_type(c.to) == LEAF:
 			nodes.append(next)
 		else:
 			nodes += get_nodes_dfs(c.to)
@@ -100,40 +114,27 @@ func get_nodes_dfs(root):
 # result.children_ids is the offset from parent to child not absolute position in data
 func get_nodes_dfs_data(root, i=[0]):
 	var node = get_node(root)
-	var data = {
-		index=i[0],
-		name=node.type,
-		node_name=node.name,
-		args_export=node.args_export,
-		args_type=node.args_type,
-		children_nodes=[], children=[],
-		offset_x=node.offset.x,
-		offset_y=node.offset.y,
-		}
+	var data = node.to_data()
+	data["index"] = i[0]
+	data["children"] = []
+	
 	var nodes = [data]
 	var temp_i = i[0]
 	for c in get_links_out(root):
 		i[0] += 1
 		data.children.append(i[0]-temp_i)
-		data.children_nodes.append(get_node(c.to))
 		
 		var next = get_node(c.to)
-		if next is LeafType:
-			nodes.append({
-				index=i[0], 
-				name=next.type, 
-				node_name=node.name,
-				args_export=next.args_export, 
-				args_type=next.args_type, 
-				offset_x=next.offset.x,
-				offset_y=next.offset.y,
-		})
+		if get_type(c.to):
+			var next_data = next.to_data()
+			next_data["index"] = i[0]
+			nodes.append(next.to_data())
 		else:
 			nodes += get_nodes_dfs_data(c.to, i)
 
 	return nodes
 	
-# connection list looks like: {from:Root, from_port:0, to:Leaf, to_port:0}
+# connection list looks like: [{from:"Source", from_port:0, to:"Dest", to_port:0}, ...]
 func get_root_connection():
 	for c in get_connection_list():
 		if c.from == "Root":
@@ -166,7 +167,7 @@ func from_data(data):
 			for j in nd_data.children:
 				# current node is last added
 				var c = nodes[nodes.size()-j]
-				_connect_nodes(node.name, node.slot_count()-2, c.name, 0)
+				connect_nodes_easy(node.name, c.name)
 		else:
 			var c_type = get_type(nd_data.name)
 			node = create_node(get_type(nd_data.name), get_node_data(c_type, nd_data.name), offset)
@@ -174,7 +175,8 @@ func from_data(data):
 			
 		node.args_export = nd_data.args_export
 		nodes.append(node)
-	_connect_nodes($Root.name, 0, nodes.back().name, 0)
+
+	connect_nodes_easy($Root.name, nodes.back().name)
 	return nodes.back()
 
 func get_type(node_name):

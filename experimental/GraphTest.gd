@@ -9,12 +9,17 @@ const BTRunner = preload("res://addons/GDBehavior/TreeRunner.gd")
 const Utils = preload("res://addons/GDBehavior/Utils.gd")
 const fldr_path = "user://gdbehavior/experimental/save_files/"
 
-var nn={
+const nn={
 	leaf={
 		"print":{
 			dname="Print", 
 			args_type={msg=TYPE_STRING}, 
 			args_export={msg="Hello, world!"}
+		},
+		"print_multi":{
+			dname="PrintMulti", 
+			args_type={msg0=TYPE_STRING, msg1=TYPE_STRING}, 
+			args_export={msg0="Hello,", msg1="world!"}
 		},
 		"print_int":{
 			dname="Print Int", 
@@ -36,8 +41,9 @@ var nn={
 	}
 	}
 
-var nodes = {
+const nodes = {
 	"print":"res://experimental/BTLeaves/PrintAction.gd",
+	"print_multi":"res://experimental/BTLeaves/PrintMulti.gd",
 	"print_int":"res://experimental/BTLeaves/PrintActionInt.gd",
 	"always_result":"res://experimental/BTLeaves/AlwaysResult.gd",
 	
@@ -49,20 +55,10 @@ var nodes = {
 
 onready var graph = $GraphEdit
 onready var graph_info_panel = $InfoPanel
+onready var save_dialog = $SaveDialog
+onready var load_dialog = $LoadDialog
 
-func _input(event):
-	if event is InputEventKey and not event.pressed:
-		if event.scancode == KEY_A:
-#		var tree_data = get_graph_data()
-#		if not tree_data.tree.empty():
-#			var tree = Utils.from_data(tree_data)
-#			var tick = Tick.new()
-#			var tree_runner = BTRunner.new(tree)
-#			tree_runner.exe(tick)
-			_save("test_bt.bt")
-		elif event.scancode == KEY_D:
-			_load("test_bt.bt")
-			
+var f = 0
 func _ready():
 	OS.low_processor_usage_mode = true
 	graph.connect("node_selected", graph_info_panel, "show_info")
@@ -70,10 +66,14 @@ func _ready():
 	for l in nn.leaf:
 		var args_export = {}
 		var args_type = {}
-		if "args_export" in nn.leaf[l]:
-			args_export = nn.leaf[l].args_export.duplicate()
 		if "args_type" in nn.leaf[l]:
-			args_type = nn.leaf[l].args_type.duplicate()
+			args_type = nn.leaf[l].args_type.duplicate(true)
+			if "args_export" in nn.leaf[l]:
+				args_export = nn.leaf[l].args_export.duplicate(true)
+			else:
+				for a in args_type:
+					args_export[a] = get_default(args_type[a])
+
 		graph.add_leaf(l, nn.leaf[l].dname, args_type, args_export)
 
 	for l in nn.composite:
@@ -82,18 +82,48 @@ func _ready():
 	for l in nn.decorator:
 		graph.add_decorator(l, nn.decorator[l].dname)
 		
-	print(graph.get_type("invert"))
-	
+	graph.save_btn.connect("pressed", save_dialog, "popup")
+	graph.load_btn.connect("pressed", load_dialog, "popup")
+	save_dialog.connect("file_selected", self, "_save")
+	load_dialog.connect("file_selected", self, "_load")
+
+# TODO: to utility class
+static func get_default(_type):
+	match _type:
+		TYPE_STRING:
+			return ""
+		TYPE_INT:
+			return 0
+		TYPE_REAL:
+			return 0.0
+		TYPE_BOOL:
+			return false
+		TYPE_VECTOR2:
+			return Vector2()
+	return null
+
+#func _input(event):
+#	if event is InputEventKey and not event.pressed:
+#		if event.scancode == KEY_A:
+#			var tree_data = get_graph_data()
+#			if not tree_data.tree.empty():
+#				var tree = Utils.from_data(tree_data)
+#				var tick = Tick.new()
+#				var tree_runner = BTRunner.new(tree)
+#				tree_runner.exe(tick)
+#			_save(fldr_path + "test_bt.bt")
+#		elif event.scancode == KEY_D:
+#			_load(fldr_path + "test_bt.bt")
+			
 # SAVING + LOADING
 func _save(_filename:String):
-	var test_filename =  fldr_path + _filename
 	
 	var dir = Directory.new()
 	if not dir.dir_exists(fldr_path):
 		dir.make_dir_recursive(fldr_path)
 	var data = get_graph_data()
 	if not data.tree.empty():
-		var saved = SaveLoad.save_data(data, test_filename)
+		var saved = SaveLoad.save_data(data, _filename)
 		if saved:
 			print("saved [%s]" % _filename)
 			return true
@@ -102,20 +132,17 @@ func _save(_filename:String):
 	return false
 
 func _load(_filename:String):
-	var test_filename =  fldr_path + _filename
 	
 	var dir = Directory.new()
 	if dir.dir_exists(fldr_path):
-		var data_loaded = SaveLoad.load_data(test_filename)
-#		print(data_loaded)
-#		print(File.new().file_exists(test_filename))
+		var data_loaded = SaveLoad.load_data(_filename)
 		if data_loaded != null:
 			graph.from_data(data_loaded)
-			print("loaded")
+			print("loaded [%s]" % _filename)
 		else:
-			print("could not load [%s]" % test_filename)
+			print("could not load [%s]" % _filename)
 	else:
-		print("directory [%s] not found" % test_filename)
+		print("directory [%s] not found" % _filename)
 	
 func get_graph_data():
 	var tree_nodes = graph.to_dict()

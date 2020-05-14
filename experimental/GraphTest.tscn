@@ -74,7 +74,24 @@ margin_right = 279.0
 margin_bottom = 21.0
 text = "Print"
 
-[node name="Slots" type="HBoxContainer" parent="InfoPanel/VBoxContainer"]
+[node name="Slots" type="VBoxContainer" parent="InfoPanel/VBoxContainer"]
 margin_top = 32.0
 margin_right = 286.0
 margin_bottom = 32.0
+
+[node name="SaveDialog" type="FileDialog" parent="."]
+margin_right = 307.0
+margin_bottom = 130.0
+rect_min_size = Vector2( 400, 300 )
+resizable = true
+filters = PoolStringArray( "*.bt ; GDBehavior File" )
+show_hidden_files = true
+
+[node name="LoadDialog" type="FileDialog" parent="."]
+margin_right = 307.0
+margin_bottom = 130.0
+rect_min_size = Vector2( 400, 300 )
+window_title = "Open a File"
+resizable = true
+mode = 0
+filters = PoolStringArray( "*.bt ; GDBehavior File" )

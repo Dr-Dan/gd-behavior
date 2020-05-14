@@ -8,24 +8,18 @@ onready var value_edit = $Slot/TextEdit
 var key: String setget set_key
 var value: String setget set_value
 
-var next = {}
-
 func _ready():
-	value_edit.connect("text_changed", self, "_on_value_changed")
-	
-func _process(delta):
-	if not next.empty():
-		key_edit.text = next.key
-		value_edit.text = next.value
-		next = {}
+	value_edit.connect("value_entered", self, "_on_value_changed")
+	# focus_mode = Control.FOCUS_ALL
 		
-func set_key(val):
-	key = val
-	next["key"] = val
+func set_key(key):
+	key = key
+	key_edit.text = key
 	
 func set_value(val):
 	value = val
-	next["value"] = val
+	value_edit.text = str(val)
+	value_edit.value = val
 
-func _on_value_changed(text):
-	emit_signal("on_value_changed", text)
+func _on_value_changed(value):
+	emit_signal("on_value_changed", value)

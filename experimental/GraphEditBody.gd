@@ -29,6 +29,8 @@ func _connect_nodes(from: String, from_slot: int, to: String, to_slot: int):
 		if nd_from.max_out > 1: # if many->many and not at capacity
 			nd_from.on_output_connected()
 			reorder_outputs(nd_from.name)
+		return true
+	return false
 		
 func _disconnect_nodes(from: String, from_slot: int, to: String, to_slot: int):
 	disconnect_node(from, from_slot, to, to_slot)
@@ -120,11 +122,11 @@ func get_links_out(source):
 			n.append(c)
 	return n
 		
-func count_links_out(source, port):
+func count_links_out(source, port=-1):
 	var cnl = get_connection_list()
 	var n = 0
 	for c in cnl:
-		if c.from == source and c.from_port == port:
+		if c.from == source and (port > 0 and c.from_port == port):
 			n += 1
 	return n
 	

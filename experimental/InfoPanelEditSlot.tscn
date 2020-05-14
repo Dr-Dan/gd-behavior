@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://experimental/InfoPanelEditSlot.gd" type="Script" id=1]
+[ext_resource path="res://experimental/LineEditTyped.gd" type="Script" id=2]
 
 [node name="PanelContainer" type="PanelContainer"]
 margin_top = 32.0
@@ -34,3 +35,5 @@ margin_left = 138.0
 margin_right = 272.0
 margin_bottom = 24.0
 size_flags_horizontal = 3
+clear_button_enabled = true
+script = ExtResource( 2 )

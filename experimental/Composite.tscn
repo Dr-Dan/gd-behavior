@@ -10,7 +10,6 @@ margin_bottom = 253.0
 mouse_filter = 1
 title = "Composite"
 offset = Vector2( 400, 150 )
-resizable = true
 script = ExtResource( 1 )
 __meta__ = {
 "_edit_use_anchors_": false

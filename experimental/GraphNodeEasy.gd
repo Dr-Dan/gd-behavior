@@ -105,3 +105,13 @@ func _set_slot_data(idx, data={}):
 
 func slot_count():
 	return get_child_count()
+
+func to_data():
+	return {
+		name=type,
+		node_name=name,
+		args_export=args_export,
+		args_type=args_type,
+		offset_x=offset.x,
+		offset_y=offset.y,
+		}
