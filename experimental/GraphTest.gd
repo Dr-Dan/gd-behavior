@@ -9,6 +9,7 @@ const BTRunner = preload("res://addons/GDBehavior/TreeRunner.gd")
 const Utils = preload("res://addons/GDBehavior/Utils.gd")
 const fldr_path = "user://gdbehavior/experimental/save_files/"
 
+# TODO: use arrays instead, add node_name to data
 const nn={
 	leaf={
 		"print":{
@@ -62,28 +63,27 @@ var f = 0
 func _ready():
 	OS.low_processor_usage_mode = true
 	graph.connect("node_selected", graph_info_panel, "show_info")
-	
-	for l in nn.leaf:
-		var leaf = nn.leaf[l].duplicate(true)
-		if "args_type" in leaf:
-			if "args_export" in leaf:
-				for a in leaf.args_type:
-					if not a in leaf.args_export:
-						leaf.args_export[a] = get_default(leaf.args_type[a])
-
-
-		graph.add_leaf(leaf)
-
-	for l in nn.composite:
-		graph.add_composite(nn.composite[l])
-
-	for l in nn.decorator:
-		graph.add_decorator(nn.decorator[l])
-		
+			
 	graph.save_btn.connect("pressed", save_dialog, "popup")
 	graph.load_btn.connect("pressed", load_dialog, "popup")
 	save_dialog.connect("file_selected", self, "_save")
 	load_dialog.connect("file_selected", self, "_load")
+	register_types()
+
+# USES: base_type, node_type, args_exp, args_type
+func register_types():
+	for base_type in nn:
+		for node_type in nn[base_type]:
+			var data = nn[base_type][node_type].duplicate()
+			# TODO: do this in node or factory automatically
+			if "args_type" in data:
+				if "args_export" in data:
+					for a in data.args_type:
+						if not a in data.args_export:
+							data.args_export[a] = get_default(data.args_type[a])
+				else:
+					data.args_export = data.args_type.duplicate(true)
+			graph.add_node_type(base_type, node_type, data)
 
 # TODO: to utility class
 static func get_default(_type):

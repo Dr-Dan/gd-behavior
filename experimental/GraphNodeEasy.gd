@@ -123,13 +123,14 @@ func from_data(data):
 	# set_name(data.node_type)
 	title = data.display_name
 	type = data.type
-#	base_type = data.base_type
+	base_type = data.base_type
 	
 	if "args_type" in data:
 		args_type = data.args_type
 
 	if "args_export" in data:
 		args_export = data.args_export
+	
 	# else:
 	# 	args_export = data.args_type
 		

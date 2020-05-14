@@ -27,25 +27,22 @@ func _set_text_value():
 
 func _update_value(txt):
 	value = convert_input(txt, type)
-	if value != null:
-		text = str(value)
-	else:
-		text = ""
+	_set_text_value()
 	emit_signal("value_entered", value)
 	release_focus()
 
-static func convert_input(input:String, _type):
+static func convert_input(input:String, _type:int):
 	match _type:
 		TYPE_STRING:
-			return input
+			return str(input)
 		TYPE_INT:
 			return int(input)
 		TYPE_REAL:
 			return float(input)
 		TYPE_BOOL:
-			if input in ["true", "True", "T"]:
+			if input in ["true", "True", "T", "1"]:
 				return true
-#			elif input in ["false", "False", "F"]: 
+#			elif input in ["false", "False", "F", "0"]: 
 			else:
 				return false
 	return null
