@@ -10,7 +10,6 @@ var value: String setget set_value
 
 func _ready():
 	value_edit.connect("value_entered", self, "_on_value_changed")
-	# focus_mode = Control.FOCUS_ALL
 		
 func set_key(key):
 	key = key

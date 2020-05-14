@@ -12,32 +12,32 @@ const fldr_path = "user://gdbehavior/experimental/save_files/"
 const nn={
 	leaf={
 		"print":{
-			dname="Print", 
+			display_name="Print", 
 			args_type={msg=TYPE_STRING}, 
 			args_export={msg="Hello, world!"}
 		},
 		"print_multi":{
-			dname="PrintMulti", 
+			display_name="PrintMulti", 
 			args_type={msg0=TYPE_STRING, msg1=TYPE_STRING}, 
 			args_export={msg0="Hello,", msg1="world!"}
 		},
 		"print_int":{
-			dname="Print Int", 
+			display_name="Print Int", 
 			args_type={value=TYPE_INT}, 
 			args_export={value=-1}
 		},
 		"always_result":{
-			dname="Always Result", 
+			display_name="Always Result", 
 			args_type={result=TYPE_BOOL}, 
 #			args_export={result=false}
 		},
 	},
 	composite={
-		sequencer={dname="Sequencer"},
-		selector={dname="Selector"}
+		sequencer={display_name="Sequencer"},
+		selector={display_name="Selector"}
 	},
 	decorator={
-		invert={dname="Invert"}
+		invert={display_name="Invert"}
 	}
 	}
 
@@ -64,23 +64,21 @@ func _ready():
 	graph.connect("node_selected", graph_info_panel, "show_info")
 	
 	for l in nn.leaf:
-		var args_export = {}
-		var args_type = {}
-		if "args_type" in nn.leaf[l]:
-			args_type = nn.leaf[l].args_type.duplicate(true)
-			if "args_export" in nn.leaf[l]:
-				args_export = nn.leaf[l].args_export.duplicate(true)
-			else:
-				for a in args_type:
-					args_export[a] = get_default(args_type[a])
+		var leaf = nn.leaf[l].duplicate(true)
+		if "args_type" in leaf:
+			if "args_export" in leaf:
+				for a in leaf.args_type:
+					if not a in leaf.args_export:
+						leaf.args_export[a] = get_default(leaf.args_type[a])
 
-		graph.add_leaf(l, nn.leaf[l].dname, args_type, args_export)
+
+		graph.add_leaf(leaf)
 
 	for l in nn.composite:
-		graph.add_composite(l, nn.composite[l].dname)
+		graph.add_composite(nn.composite[l])
 
 	for l in nn.decorator:
-		graph.add_decorator(l, nn.decorator[l].dname)
+		graph.add_decorator(nn.decorator[l])
 		
 	graph.save_btn.connect("pressed", save_dialog, "popup")
 	graph.load_btn.connect("pressed", load_dialog, "popup")

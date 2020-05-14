@@ -6,5 +6,6 @@ func _enter_tree():
 	add_item(
 		lbl, 
 		{
-			right={type=0, color=Color.white},
+			right={type=1, color=Color.white},
 		})
+	# add_output()

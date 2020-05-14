@@ -1,5 +1,7 @@
 extends "GraphEditBody.gd"
 
+signal on_node_selected(node, args_type)
+
 const Composite = preload("res://experimental/Composite.tscn")
 const Decorator = preload("res://experimental/Decorator.tscn")
 const Leaf = preload("res://experimental/Leaf.tscn")
@@ -32,7 +34,7 @@ func _ready():
 	load_btn = Button.new()
 	load_btn.text = "Load"
 	get_zoom_hbox().add_child(load_btn)
-	
+
 func _menu_item_pressed(submenu_name, submenu_idx):
 	var node_data = node_types[submenu_name][submenu_idx]
 	create_node(submenu_name, node_data, context_menu.rect_position)
@@ -40,26 +42,13 @@ func _menu_item_pressed(submenu_name, submenu_idx):
 func create_node(type, data, offset=Vector2()):
 	var nd = get_instance(type)
 	if nd != null:
-		nd.set_name(data.display_name)
-		nd.title = data.display_name
+		data = data.duplicate(true)
+		nd.from_data(data)
 		nd.offset = offset
-		nd.type = data.node_name
-		nd.args_type = data.args_type.duplicate()
-		if "args_export" in data:
-			nd.args_export = data.args_export.duplicate()
-		else:
-			nd.args_export = data.args_type.duplicate()
-			
 		add_child(nd)
 		graph_nodes.append(nd)
 		return nd
 	return null
-
-func clear_nodes():
-	clear_connections()
-	for nd in graph_nodes:
-		nd.queue_free()
-	graph_nodes.clear()
 
 func get_instance(type):
 	var nd = null
@@ -72,9 +61,10 @@ func get_instance(type):
 			nd = Decorator.instance()
 	return nd
 	
-func get_node_data(type, node_name):
+
+func get_node_data(type:String, node_name:String):
 	for n in node_types[type]:
-		if n.node_name == node_name:
+		if n.type == node_name:
 			return n
 	return null
 
@@ -83,20 +73,19 @@ func connect_nodes_easy(from:String, to:String):
 	_connect_nodes(from, count_links_out(from), to, 0)
 
 
-func add_node_type(node_name, node_type, display_name, args_type={}, args_export={}):
-	context_menu.get_submenu(node_type).add_item(display_name)
-	node_types[node_type].append({
-		node_name=node_name, display_name=display_name, args_type=args_type, args_export=args_export})
+func add_node_type(node_type, data):
+	data["type"] = node_type
+	context_menu.get_submenu(node_type).add_item(data.display_name)
+	node_types[node_type].append(data)
 		
-		
-func add_leaf(node_name, display_name, args_type={}, args_export={}):
-	add_node_type(node_name, LEAF, display_name, args_type, args_export)
+func add_leaf(node_data):
+	add_node_type(LEAF, node_data.duplicate())
 
-func add_composite(node_name, display_name, args_type={}, args_export={}):
-	add_node_type(node_name, COMPOSITE, display_name, args_type, args_export)
+func add_composite(node_data):
+	add_node_type(COMPOSITE, node_data.duplicate())
 
-func add_decorator(node_name, display_name, args_type={}, args_export={}):
-	add_node_type(node_name, DECORATOR, display_name, args_type, args_export)
+func add_decorator(node_data):
+	add_node_type(DECORATOR, node_data.duplicate())
 
 
 func get_nodes_dfs(root):
@@ -104,7 +93,7 @@ func get_nodes_dfs(root):
 	var children = get_links_out(root)
 	for c in children:
 		var next = get_node(c.to)
-		if get_type(c.to) == LEAF:
+		if next.base_type == LEAF:
 			nodes.append(next)
 		else:
 			nodes += get_nodes_dfs(c.to)
@@ -125,7 +114,7 @@ func get_nodes_dfs_data(root, i=[0]):
 		data.children.append(i[0]-temp_i)
 		
 		var next = get_node(c.to)
-		if get_type(c.to):
+		if next.base_type == LEAF:
 			var next_data = next.to_data()
 			next_data["index"] = i[0]
 			nodes.append(next.to_data())
@@ -148,9 +137,6 @@ func to_dict():
 		d = get_nodes_dfs_data(r.to)
 	return d
 	
-func from_dict(data):
-	pass
-
 func from_data(data):
 	clear_nodes()
 	var nodes = []
@@ -160,18 +146,14 @@ func from_data(data):
 		var offset = Vector2(nd_data.offset_x, nd_data.offset_y)
 		var node
 		if "children" in nd_data:
-			var c_type = get_type(nd_data.name)
-			node = create_node(get_type(nd_data.name), get_node_data(c_type, nd_data.name), offset)
-			node.name = nd_data.node_name
+			node = create_node(nd_data.base_type, get_node_data(nd_data.base_type, nd_data.type), offset)
 
 			for j in nd_data.children:
 				# current node is last added
 				var c = nodes[nodes.size()-j]
 				connect_nodes_easy(node.name, c.name)
 		else:
-			var c_type = get_type(nd_data.name)
-			node = create_node(get_type(nd_data.name), get_node_data(c_type, nd_data.name), offset)
-			node.name = nd_data.node_name
+			node = create_node(nd_data.base_type, get_node_data(nd_data.base_type, nd_data.type), offset)
 			
 		node.args_export = nd_data.args_export
 		nodes.append(node)
@@ -179,9 +161,8 @@ func from_data(data):
 	connect_nodes_easy($Root.name, nodes.back().name)
 	return nodes.back()
 
-func get_type(node_name):
-	for t in node_types:
-		var d = get_node_data(t, node_name) 
-		if d != null:
-			return t
-	return ""
+func clear_nodes():
+	clear_connections()
+	for nd in graph_nodes:
+		nd.queue_free()
+	graph_nodes.clear()

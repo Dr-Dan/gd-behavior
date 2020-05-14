@@ -95,3 +95,4 @@ window_title = "Open a File"
 resizable = true
 mode = 0
 filters = PoolStringArray( "*.bt ; GDBehavior File" )
+show_hidden_files = true

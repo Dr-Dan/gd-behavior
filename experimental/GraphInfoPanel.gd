@@ -6,7 +6,7 @@ onready var heading_label = $VBoxContainer/Heading/Label
 onready var slots = $VBoxContainer/Slots
 
 # TODO: remove the node, store only the required data
-var current_node = null
+#var current_node = null
 
 var edit_slots = []
 

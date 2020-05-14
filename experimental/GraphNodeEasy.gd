@@ -11,6 +11,7 @@ const EMPTY = {
 	type=-1,
 	color=Color.white}
 
+var base_type = ""
 var type = ""
 
 # represent args that have been set, possible args are stored in graph
@@ -35,24 +36,25 @@ func setup():
 func on_output_connected():
 	pass
 	
-func add_input():
+func add_input(_type=0):
 	var lbl_out = Label.new()
-	lbl_out.text = str(slot_count())
+	lbl_out.text = "In"
+	# lbl_out.text = str(slot_count())
 	lbl_out.align = Label.ALIGN_LEFT
 	add_item(
 		lbl_out,
 		{
-			left={type=0, color=Color.white},
+			left={type=_type, color=Color.white},
 		})
 
-func add_output():
+func add_output(_type=1):
 	var lbl_out = Label.new()
 	lbl_out.text = str(slot_count()-1)
 	lbl_out.align = Label.ALIGN_RIGHT
 	add_item(
 		lbl_out,
 		{
-			right={type=0, color=Color.white},
+			right={type=_type, color=Color.white},
 		})
 
 # NOTE: this behaviour only applies to multi-output nodes
@@ -108,10 +110,29 @@ func slot_count():
 
 func to_data():
 	return {
-		name=type,
-		node_name=name,
+		base_type=base_type,
+		type=type,
+		display_name=title,
 		args_export=args_export,
 		args_type=args_type,
 		offset_x=offset.x,
 		offset_y=offset.y,
 		}
+
+func from_data(data):
+	# set_name(data.node_type)
+	title = data.display_name
+	type = data.type
+#	base_type = data.base_type
+	
+	if "args_type" in data:
+		args_type = data.args_type
+
+	if "args_export" in data:
+		args_export = data.args_export
+	# else:
+	# 	args_export = data.args_type
+		
+#	offset.x = data.offset_x
+#	offset.y = data.offset_y
+	return self

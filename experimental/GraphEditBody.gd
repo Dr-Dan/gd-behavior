@@ -12,19 +12,13 @@ func _ready():
 	connect("popup_request", self, "_popup")
 	connect("_end_node_move", self, "_on_node_moved")
 	connect("node_selected", self, "_on_node_selected")
-			
-# BUG: this fails if reconnecting before release
-# func _input(event):
-# 	if event is InputEventKey and not event.pressed and  event.scancode == KEY_A:
-# 		print(get_connection_list())
-# #		print(get_children())
-		
+	add_valid_connection_type(0,1)
+
 ###############################################################
 # SIGNAL EVENTS
 
 func _connect_nodes(from: String, from_slot: int, to: String, to_slot: int):
-	if can_connect(from, from_slot, to, to_slot):
-		connect_node(from, from_slot, to, to_slot)
+	if to != from and connect_node(from, from_slot, to, to_slot) == OK:
 		var nd_from = get_node(from)
 		if nd_from.max_out > 1: # if many->many and not at capacity
 			nd_from.on_output_connected()
@@ -108,11 +102,11 @@ func _sort_y(a, b):
 ###############################################################
 # UTILITIES
 	
-func can_connect(from: String, from_slot: int, to: String, to_slot: int):
-	# NOTE: this only applies for one2one nodes
-	return from != to\
-		and count_links_out(from, from_slot) < 1\
-		and count_links_in(to, to_slot) < 1
+# func can_connect(from: String, from_slot: int, to: String, to_slot: int):
+# 	# NOTE: this only applies for one2one nodes
+# 	return from != to\
+# 		and count_links_out(from, from_slot) < 1\
+# 		and count_links_in(to, to_slot) < 1
 
 func get_links_out(source):
 	var cnl = get_connection_list()
