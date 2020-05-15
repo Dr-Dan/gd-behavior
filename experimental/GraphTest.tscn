@@ -37,7 +37,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="PopupMenu" type="PopupMenu" parent="."]
+[node name="PopupMenu" type="PopupMenu" parent="GraphEdit"]
 margin_right = 20.0
 margin_bottom = 20.0
 allow_search = true

@@ -74,3 +74,14 @@ static func from_data(data):
 
 	return nodes.back()
 
+
+
+static func min_Vector2(start, end):
+	var min_x = min(start.x, end.x)
+	var min_y = min(start.y, end.y)
+	return Vector2(min_x, min_y)
+	
+static func max_Vector2(start, end):
+	var max_x = max(start.x, end.x)
+	var max_y = max(start.y, end.y)
+	return  Vector2(max_x, max_y)

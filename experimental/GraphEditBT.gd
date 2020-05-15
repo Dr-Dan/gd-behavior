@@ -1,6 +1,6 @@
 extends "GraphEditBody.gd"
 
-signal on_node_selected(node, args_type)
+# signal on_node_selected(node, args_type)
 
 const Composite = preload("res://experimental/Composite.tscn")
 const Decorator = preload("res://experimental/Decorator.tscn")
@@ -11,14 +11,14 @@ const LEAF = "leaf"
 const COMPOSITE = "composite"
 const DECORATOR = "decorator"
 
-var graph_nodes = []
 var node_factory = NodeFactory.new()
 
 var save_btn
 var load_btn
 
 func _ready():
-	context_menu.connect("on_menu_item_chosen", self, "_menu_item_pressed")
+	add_valid_connection_type(0,1)
+	# context_menu.connect("on_menu_item_chosen", self, "_menu_item_pressed")
 
 	context_menu.create_submenu(LEAF, "Leaves")
 	context_menu.create_submenu(COMPOSITE,"Composites")
@@ -39,18 +39,14 @@ func _ready():
 
 func _menu_item_pressed(submenu_name, submenu_idx):
 	var node_data = node_factory.node_types[submenu_name][submenu_idx]
-	var node = node_factory.create_node(node_data, context_menu.rect_position)
+	var node = node_factory.create_node(node_data, context_menu.rect_position+scroll_offset)
 	if node != null:
 		add_node_obj(node)
 
-func add_node_obj(nd):
-	add_child(nd)
-	graph_nodes.append(nd)
-	return nd
 
-func add_node_type(base_type, node_type, data):
-	node_factory.add_node_type(base_type, node_type, data)
-	context_menu.get_submenu(base_type).add_item(data.display_name)
+func add_node_type(base_type, display_name, args_type={}, args_export={}):
+	node_factory.add_node_type(base_type, display_name, args_type, args_export)
+	context_menu.get_submenu(base_type).add_item(display_name)
 		
 func connect_nodes_easy(from:String, to:String):
 	_connect_nodes(from, count_links_out(from), to, 0)
@@ -62,13 +58,7 @@ func get_root_connection():
 			return c
 	return null
 
-func to_dict():
-	var d = {}
-	var r = get_root_connection()
-	if r != null:
-		d = get_nodes_dfs_data(r.to)
-	return d
-	
+
 
 func get_nodes_dfs(root):
 	var nodes = [get_node(root)]
@@ -82,32 +72,34 @@ func get_nodes_dfs(root):
 
 	return nodes
 
-# USES: children, index, base_type
+# USES (ADD): children, index
 # result.children_ids is the offset from parent to child not absolute position in data
 func get_nodes_dfs_data(root, i=[0]):
 	var node = get_node(root)
 	var data = node.to_data()
 	data["index"] = i[0]
-	data["children"] = []
 	
+	var links_out = get_links_out(root)
+	if links_out.size() > 0:
+		data["children"] = []
 	var nodes = [data]
-	var temp_i = i[0]
-	for c in get_links_out(root):
+	
+	for c in links_out:
 		i[0] += 1
-		data.children.append(i[0]-temp_i)
-		
-		var next = get_node(c.to)
-		if next.base_type == LEAF:
-			var next_data = next.to_data()
-			next_data["index"] = i[0]
-			nodes.append(next_data)
-		else:
-			nodes += get_nodes_dfs_data(c.to, i)
+		data["children"].append(i[0]-data["index"])
+		nodes += get_nodes_dfs_data(c.to, i)
 
 	return nodes
+
+func to_dict():
+	var d = {}
+	var r = get_root_connection()
+	if r != null:
+		d = get_nodes_dfs_data(r.to)
+	return d
 	
-# USES: children, index, base_type, offset
-func from_data(data):
+# USES: children, offset
+func from_dict(data):
 	clear_nodes()
 	var nodes = []
 	var start_pos = Vector2()
@@ -133,8 +125,3 @@ func from_data(data):
 	connect_nodes_easy($Root.name, nodes.back().name)
 	return nodes.back()
 
-func clear_nodes():
-	clear_connections()
-	for nd in graph_nodes:
-		nd.queue_free()
-	graph_nodes.clear()

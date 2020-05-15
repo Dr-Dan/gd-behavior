@@ -12,7 +12,7 @@ const EMPTY = {
 	color=Color.white}
 
 var base_type = ""
-var type = ""
+#var type_name = ""
 
 # represent args that have been set, possible args are stored in graph
 var args_export = {}
@@ -25,13 +25,13 @@ var max_in = 0
 export var start_out = 0
 export var start_in = 0
 
-func setup():
-	start_in = clamp(start_in, 0, max_in)
-	start_out = clamp(start_out, 0, max_out)
-	for n in start_in:
-		add_input()
-	for n in start_out:
-		add_output()
+#func setup():
+#	start_in = clamp(start_in, 0, max_in)
+#	start_out = clamp(start_out, 0, max_out)
+#	for n in start_in:
+#		add_input()
+#	for n in start_out:
+#		add_output()
 				
 func on_output_connected():
 	pass
@@ -111,7 +111,7 @@ func slot_count():
 func to_data():
 	return {
 		base_type=base_type,
-		type=type,
+#		type_name=type_name,
 		display_name=title,
 		args_export=args_export,
 		args_type=args_type,
@@ -120,9 +120,10 @@ func to_data():
 		}
 
 func from_data(data):
-	# set_name(data.node_type)
 	title = data.display_name
-	type = data.type
+#	type_name = data.type_name
+	name = title
+	
 	base_type = data.base_type
 	
 	if "args_type" in data:

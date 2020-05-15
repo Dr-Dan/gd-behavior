@@ -12,8 +12,14 @@ onready var slots = $VBoxContainer/Slots
 
 var edit_slots = []
 
+func clear():
+	heading_label.text = ""
+	var ch = slots.get_children()
+	for c in ch:
+		c.queue_free()
+
+
 # USES: args_type, args_export, 
-# could use name in signal
 # TODO: take name, arg types and arg values
 func show_info(node):
 	heading_label.text = node.title
@@ -33,6 +39,7 @@ func show_info(node):
 		s.connect("on_value_changed", self, "_set_value", [a, node])
 		
 # TODO: use signal for this, 
+# only really need name or id
 func _set_value(value, key, node):
 	if is_instance_valid(node):
 		node.args_export[key] = value
