@@ -37,6 +37,7 @@ func _ready():
 	get_zoom_hbox().add_child(load_btn)
 
 
+	# TODO: fix this mess
 func _menu_item_pressed(submenu_name, submenu_idx):
 	var node_data = node_factory.node_types[submenu_name][submenu_idx]
 	var node = node_factory.create_node(node_data, context_menu.rect_position+scroll_offset)

@@ -19,6 +19,11 @@ func _ready():
 	connect("focus_entered", self, "_set_text_value")
 	connect("focus_exited", self, "_set_text_value")
 	
+	
+func _gui_input(event):
+	if event is InputEventKey:
+		accept_event()
+		
 func _set_text_value():
 	if value != null:
 		text = str(value)

@@ -12,36 +12,41 @@ const fldr_path = "user://gdbehavior/experimental/save_files/"
 const nn={
 	leaf=[
 		{
-			type_name="print",
+			# type_name="print",
 			display_name="Print", 
 			args_type={msg=TYPE_STRING}, 
-			args_export={msg="Hello, world!"}
+			args_export={msg="Hello, world!"},
+			filepath="res://experimental/BTLeaves/PrintAction.gd",
 		},
-		{
-			type_name="print_multi",
-			display_name="PrintMulti", 
-			args_type={msg0=TYPE_STRING, msg1=TYPE_STRING}, 
-			args_export={msg0="Hello,", msg1="world!"}
-		},
-		{
-			type_name="print_int",
-			display_name="Print Int", 
-			args_type={value=TYPE_INT}, 
-			args_export={value=-1}
-		},
-		{
-			type_name="always_result",
-			display_name="Always Result", 
-			args_type={result=TYPE_BOOL}, 
-			args_export={result=false}
-		},
+		# {
+		# 	type_name="print_multi",
+		# 	display_name="PrintMulti", 
+		# 	args_type={msg0=TYPE_STRING, msg1=TYPE_STRING}, 
+		# 	args_export={msg0="Hello,", msg1="world!"}
+		# },
+		# {
+		# 	type_name="print_int",
+		# 	display_name="Print Int", 
+		# 	args_type={value=TYPE_INT}, 
+		# 	args_export={value=-1}
+		# },
+		# {
+		# 	type_name="always_result",
+		# 	display_name="Always Result", 
+		# 	args_type={result=TYPE_BOOL}, 
+		# 	args_export={result=false}
+		# },
 	],
 	composite=[
-		{type_name="sequencer", display_name="Sequencer"},
-		{type_name="selector", display_name="Selector"}
+		{
+			# type_name="sequencer", 
+			display_name="Sequencer",
+			filepath="res://addons/GDBehavior/Composite/Sequencer.gd"
+		},
+		# {type_name="selector", display_name="Selector"}
 	],
 	decorator=[
-		{type_name="invert", display_name="Invert"}
+		# {type_name="invert", display_name="Invert"}
 	],
 	}
 
