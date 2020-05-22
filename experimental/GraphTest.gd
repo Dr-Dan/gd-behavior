@@ -15,7 +15,7 @@ const nn={
 			# type_name="print",
 			display_name="Print", 
 			args_type={msg=TYPE_STRING}, 
-			args_export={msg="Hello, world!"},
+			# args_export={msg="Hello, world!"},
 			filepath="res://experimental/BTLeaves/PrintAction.gd",
 		},
 		# {
@@ -86,13 +86,13 @@ func register_types():
 			var data = d.duplicate()
 			
 			var args_type = {}
-			var args_export = {}
+			# var args_export = {}
 			if "args_type" in data:
 				args_type = data.args_type
-			if "args_export" in data:
-				args_export = data.args_export
+			# if "args_export" in data:
+			# 	args_export = data.args_export
 				
-			graph.add_node_type(base_type, data.display_name, args_type, args_export)
+			graph.add_node_type(base_type, data.display_name, d.filepath, args_type)
 
 
 #func _input(event):
@@ -132,6 +132,7 @@ func _load(_filename:String):
 			graph.from_dict(data_loaded)
 			print("loaded [%s]" % _filename)
 			graph_info_panel.clear()
+			graph.selected = []
 		else:
 			print("could not load [%s]" % _filename)
 	else:

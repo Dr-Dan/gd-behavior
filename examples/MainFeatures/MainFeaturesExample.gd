@@ -5,13 +5,24 @@ An example where actors walk around and say something if within range.
 """
 
 # ================================================================		
+
+func _ready() -> void:
+	setup_tree()
+
+func _process(delta):
+	# Note: This could also be handled from each actor's _process(delta) function
+	for t in ticks:
+		t.delta = delta
+		# TreeRunner returns an integer for SUCCESS, FAILURE, RUNNING
+		tree_runner.exe(t)
+		
+# ================================================================		
 # The tick
 # 	passed to each node as they execute
 # 	handles the running memory and closing hanging nodes
 #	useful for extracting information about execution for logging
 # 	also used to get outside info to the running node as shown below
 const Tick = preload("res://addons/GDBehavior/Tick.gd")
-
 class TestTick:
 	extends Tick
 	
@@ -24,8 +35,56 @@ class TestTick:
 	func _init(actor):
 		self.actor = actor
 		
+				
 # ================================================================		
-# CUSTOM NODES
+
+const BTRunner = preload("res://addons/GDBehavior/TreeRunner.gd")
+const Composites = preload("res://addons/GDBehavior/Composites.gd")
+const Decorators = preload("res://addons/GDBehavior/Decorators.gd")
+const SeqMem = Composites.SequencerMem
+const Parallel = Composites.Parallel
+const Succeeder = Decorators.Succeeder
+
+const MultiCondition = Decorators.MultiCondition
+const Invert = Decorators.Invert
+
+onready var actors = $Actors.get_children()
+
+var ticks = []
+var tree_runner
+
+func setup_tree():
+	var vp_sz = get_viewport_rect().size
+	for a in actors:
+		var tick = TestTick.new(a)
+		ticks.append(tick)
+		a.position = Vector2(randf() * vp_sz.x, randf() * vp_sz.y)
+	
+	# Setup behaviours
+	var speak = SeqMem.new([
+		# Multi-Condition decorator
+		MultiCondition.new(
+			# if all return SUCCESS
+			[Invert.new(IsSpeaking.new()), ActorInRange.new(80.0, actors)],	
+			# do this. (can be any type of node.)
+			SayRandom.new()), 
+		WaitDelta.new(2.5),
+		StopSpeaking.new()
+	])
+			
+	var goto = SeqMem.new([
+		GotoRandom.new(vp_sz, 120.0),
+		WaitDelta.new(2.0),
+		ColorRandom.new()
+	])
+		
+	# Succeeder will stop any FAILUREs from interrupting parallel node
+	# a RUNNING result will still get through however
+	var root = Parallel.new([Succeeder.new(speak), goto], 2)
+	tree_runner = BTRunner.new(root)
+
+# ================================================================		
+# CUSTOM BT NODES
 const BTAction = preload("res://addons/GDBehavior/Base/BTAction.gd")
 
 # Note: using time_waited[self] would overwrite if using an object multiple times in the tree.
@@ -125,16 +184,7 @@ const BTCondition = preload("res://addons/GDBehavior/Base/BTCondition.gd")
 
 # work similarly to BTAction except _validate is overriden instead of _exe
 # unlike _exe; _validate returns a bool
-class AlwaysCondition:
-	extends BTCondition
-	var value:bool
 
-	func _init(value:bool).("is speaking?"):
-		self.value = value
-
-	func _validate(tick):
-		return value	
-			
 class ActorInRange:
 	extends BTCondition
 	
@@ -163,65 +213,4 @@ class IsSpeaking:
 			return true
 		return false
 	
-				
-# ================================================================		
 
-func _ready() -> void:
-	setup_actor_goto()
-
-func _process(delta):
-	test_actor_goto(delta)
-		
-# ================================================================		
-
-const BTRunner = preload("res://addons/GDBehavior/TreeRunner.gd")
-const Composites = preload("res://addons/GDBehavior/Composites.gd")
-const Decorators = preload("res://addons/GDBehavior/Decorators.gd")
-const SeqMem = Composites.SequencerMem
-const Parallel = Composites.Parallel
-const Succeeder = Decorators.Succeeder
-
-const MultiCondition = Decorators.MultiCondition
-const Invert = Decorators.Invert
-
-onready var actors = $Actors.get_children()
-
-var ticks = []
-var tree_runner
-
-func setup_actor_goto():
-	var vp_sz = get_viewport_rect().size
-	for a in actors:
-		var tick = TestTick.new(a)
-		ticks.append(tick)
-		a.position = Vector2(randf() * vp_sz.x, randf() * vp_sz.y)
-	
-	# Setup behaviours
-	var speak = SeqMem.new([
-		# Multi-Condition decorator
-		MultiCondition.new(
-			# if all return SUCCESS
-			[Invert.new(IsSpeaking.new()), ActorInRange.new(80.0, actors)],	
-			# do this. (can be any type of node.)
-			SayRandom.new()), 
-		WaitDelta.new(2.5),
-		StopSpeaking.new()
-	])
-			
-	var goto = SeqMem.new([
-		GotoRandom.new(vp_sz, 120.0),
-		WaitDelta.new(2.0),
-		ColorRandom.new()
-	])
-		
-	# Succeeder will stop any FAILUREs from interrupting parallel node
-	# a RUNNING result will still get through however
-	var root = Parallel.new([Succeeder.new(speak), goto], 2)
-	tree_runner = BTRunner.new(root)
-	
-# Note: here for convenience. This can also be handled from each actor's _process(delta) function
-func test_actor_goto(delta):
-	for t in ticks:
-		t.delta = delta
-		# TreeRunner returns an integer for SUCCESS, FAILURE, RUNNING
-		tree_runner.exe(t)

@@ -11,7 +11,10 @@ onready var context_menu = get_node("PopupMenu")
 var selected:Array
 var graph_nodes = []
 
-var dragging_node=false
+enum InputState{
+	None, DragNode, DragBox
+}
+var dragging_state=InputState.None
 
 var drag_start: Vector2
 #var drag_end: Vector2
@@ -30,24 +33,34 @@ func _menu_item_pressed(submenu_name, submenu_idx):
 	pass
 	
 func _unhandled_key_input(event):
-	if event.scancode == KEY_BACKSPACE:
+	if event.scancode == KEY_BACKSPACE and event.pressed:
 		delete_selected()
 		
 func _gui_input(event):
 	if event is InputEventMouseButton and event.button_index == 1:
 		if event.pressed:
 			var s = get_nodes_in_area(Rect2(event.position, Vector2()))
+			drag_start = event.position
 			if not s.empty():
-				dragging_node = true
+				dragging_state = InputState.DragNode
 			else:
-				drag_start = event.position
-				
-		elif not dragging_node:
+				selected = []
+				dragging_state = InputState.DragBox
+		else:
 			var start = Utils.min_Vector2(drag_start, event.position)
 			var end = Utils.max_Vector2(drag_start, event.position)
+			var size = end-start
+			var nodes = get_nodes_in_area(Rect2(start, size))
 			
-			var r = Rect2(start, end-start)
-			selected = get_nodes_in_area(r)
+			match dragging_state:
+				InputState.DragBox:
+					selected = nodes
+				InputState.DragNode:
+					if size.length() < 0.1:
+						var n = nodes[0]
+						selected = [n]
+						set_selected(n)
+			dragging_state = InputState.None
 			
 func get_nodes_in_area(rect:Rect2):
 	var result = []
@@ -57,6 +70,7 @@ func get_nodes_in_area(rect:Rect2):
 	return result
 	
 func delete_selected():
+	print(selected.size())
 	for node in selected:
 		var nodes = get_connections(node.name)
 		for l in nodes:
@@ -89,11 +103,9 @@ func _popup(pos):
 	context_menu.popup()
 
 func _on_node_dragged(node):
-	dragging_node = true
-	selected = [node]
+	pass
 	
 func _on_node_dropped():
-	dragging_node = false
 	# NOTE: could be expensive for big trees
 	# but a tree that big begets sufferance
 	for c in get_connection_list():

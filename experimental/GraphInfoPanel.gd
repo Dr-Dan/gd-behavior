@@ -31,11 +31,11 @@ func show_info(node):
 		slots.add_child(s)
 		
 		s.key = a
+		
+		s.value_edit.type = int(node.args_type[a])
 		if a in node.args_export:
 			s.value = str(node.args_export[a])
-		else:
-			s.value = ""
-		s.value_edit.type = int(node.args_type[a])
+
 		s.connect("on_value_changed", self, "_set_value", [a, node])
 		
 # TODO: use signal for this, 
@@ -43,3 +43,4 @@ func show_info(node):
 func _set_value(value, key, node):
 	if is_instance_valid(node):
 		node.args_export[key] = value
+		emit_signal("on_value_changed", node, key, value)

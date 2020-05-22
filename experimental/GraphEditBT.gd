@@ -16,6 +16,12 @@ var node_factory = NodeFactory.new()
 var save_btn
 var load_btn
 
+var node_types = {
+	LEAF:[],
+	COMPOSITE:[],
+	DECORATOR:[]
+}
+
 func _ready():
 	add_valid_connection_type(0,1)
 	# context_menu.connect("on_menu_item_chosen", self, "_menu_item_pressed")
@@ -39,16 +45,24 @@ func _ready():
 
 	# TODO: fix this mess
 func _menu_item_pressed(submenu_name, submenu_idx):
-	var node_data = node_factory.node_types[submenu_name][submenu_idx]
+	var node_data = node_types[submenu_name][submenu_idx]
 	var node = node_factory.create_node(node_data, context_menu.rect_position+scroll_offset)
 	if node != null:
 		add_node_obj(node)
 
 
-func add_node_type(base_type, display_name, args_type={}, args_export={}):
-	node_factory.add_node_type(base_type, display_name, args_type, args_export)
+func add_node_type(base_type, display_name, filepath, args_type={}):
 	context_menu.get_submenu(base_type).add_item(display_name)
-		
+	
+	var data = {
+		base_type=base_type,
+		display_name=display_name,
+		args_type=args_type,
+		# args_export=args_export,
+		filepath=filepath,
+	}
+	node_types[base_type].append(data)
+	
 func connect_nodes_easy(from:String, to:String):
 	_connect_nodes(from, count_links_out(from), to, 0)
 		
