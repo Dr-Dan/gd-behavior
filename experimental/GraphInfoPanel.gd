@@ -3,6 +3,7 @@ extends PanelContainer
 signal on_value_changed(node_name, key, value)
 
 const Slot = preload("res://experimental/InfoPanelEditSlot.tscn")
+const Utils = preload("res://experimental/Utils.gd")
 
 onready var heading_label = $VBoxContainer/Heading/Label
 onready var slots = $VBoxContainer/Slots
@@ -31,10 +32,12 @@ func show_info(node):
 		slots.add_child(s)
 		
 		s.key = a
-		
-		s.value_edit.type = int(node.args_type[a])
+		var type = int(node.args_type[a])
+		s.value_edit.type = type
 		if a in node.args_export:
 			s.value = str(node.args_export[a])
+		else:
+			s.value = str(Utils.get_default(type))
 
 		s.connect("on_value_changed", self, "_set_value", [a, node])
 		

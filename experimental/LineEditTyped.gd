@@ -1,5 +1,7 @@
 extends LineEdit
 
+const Utils = preload("res://experimental/Utils.gd")
+
 signal value_entered(value)
 
 enum InputType {
@@ -31,23 +33,7 @@ func _set_text_value():
 		text = ""
 
 func _update_value(txt):
-	value = convert_input(txt, type)
+	value = Utils.convert_input(txt, type)
 	_set_text_value()
 	emit_signal("value_entered", value)
 	release_focus()
-
-static func convert_input(input:String, _type:int):
-	match _type:
-		TYPE_STRING:
-			return str(input)
-		TYPE_INT:
-			return int(input)
-		TYPE_REAL:
-			return float(input)
-		TYPE_BOOL:
-			if input in ["true", "True", "T", "1"]:
-				return true
-#			elif input in ["false", "False", "F", "0"]: 
-			else:
-				return false
-	return null

@@ -96,3 +96,10 @@ resizable = true
 mode = 0
 filters = PoolStringArray( "*.bt ; GDBehavior File" )
 show_hidden_files = true
+
+[node name="TestButton" type="Button" parent="."]
+margin_left = 369.11
+margin_top = 15.5563
+margin_right = 381.11
+margin_bottom = 35.5563
+text = "Test"

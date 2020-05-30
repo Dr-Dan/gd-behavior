@@ -13,9 +13,9 @@ func exe(tick):
 	return FAILURE
 
 func from_dict(data):
-	if "args_export" in data:
-		for d in data.args_export:
-			set(d, data.args_export[d])
+	if "args" in data:
+		for d in data.args:
+			set(d, data.args[d])
 	return self
 	
 func to_dict():

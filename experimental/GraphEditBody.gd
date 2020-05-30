@@ -1,6 +1,8 @@
 extends GraphEdit
 
-#signal _nodes_selected_drag(nodes)
+#signal nodes_selected(nodes)
+#signal nodes_deselected(nodes)
+#signal node_deleted(nodes)
 
 const Utils = preload("res://addons/GDBehavior/Utils.gd")
 
@@ -15,10 +17,7 @@ enum InputState{
 	None, DragNode, DragBox
 }
 var dragging_state=InputState.None
-
 var drag_start: Vector2
-#var drag_end: Vector2
-
 	
 func _ready():
 	connect("connection_request", self, "_connect_nodes")
@@ -26,15 +25,23 @@ func _ready():
 	connect("popup_request", self, "_popup")
 	connect("node_selected", self, "_on_node_dragged")
 	connect("_end_node_move", self, "_on_node_dropped")
+	connect("connection_to_empty", self, "_drag_to_empty")
 
 	context_menu.connect("on_menu_item_chosen", self, "_menu_item_pressed")
+	
 
+var node_connect_next:String
+func _drag_to_empty(from: String, from_slot: int, release_position: Vector2):
+	_popup(release_position)
+	node_connect_next = from
+	
 func _menu_item_pressed(submenu_name, submenu_idx):
 	pass
 	
 func _unhandled_key_input(event):
 	if event.scancode == KEY_BACKSPACE and event.pressed:
 		delete_selected()
+		# TODO: clear info
 		
 func _gui_input(event):
 	if event is InputEventMouseButton and event.button_index == 1:
@@ -60,6 +67,10 @@ func _gui_input(event):
 						var n = nodes[0]
 						selected = [n]
 						set_selected(n)
+				_:
+					# TODO: clear info?
+					pass
+
 			dragging_state = InputState.None
 			
 func get_nodes_in_area(rect:Rect2):
@@ -70,7 +81,6 @@ func get_nodes_in_area(rect:Rect2):
 	return result
 	
 func delete_selected():
-	print(selected.size())
 	for node in selected:
 		var nodes = get_connections(node.name)
 		for l in nodes:
@@ -107,7 +117,6 @@ func _on_node_dragged(node):
 	
 func _on_node_dropped():
 	# NOTE: could be expensive for big trees
-	# but a tree that big begets sufferance
 	for c in get_connection_list():
 		var nd = get_node(c.from)
 		if nd.max_out > 1:
@@ -116,10 +125,17 @@ func _on_node_dropped():
 
 
 ###############################################################
-
+	
+func connect_nodes_easy(from:String, to:String):
+	_connect_nodes(from, count_links_out(from), to, 0)
+		
 func add_node_obj(nd):
 	add_child(nd)
 	graph_nodes.append(nd)
+# if user has dragged to empty
+	if not node_connect_next.empty():
+		connect_nodes_easy(node_connect_next, nd.name)
+		node_connect_next = ""
 	return nd
 
 func clear_nodes():
@@ -171,11 +187,18 @@ func _sort_y(a, b):
 ###############################################################
 # UTILITIES
 	
-# func can_connect(from: String, from_slot: int, to: String, to_slot: int):
-# 	# NOTE: this only applies for one2one nodes
-# 	return from != to\
-# 		and count_links_out(from, from_slot) < 1\
-# 		and count_links_in(to, to_slot) < 1
+func get_nodes_dfs(root):
+	var nodes = [get_node(root)]
+	var children = get_links_out(root)
+	for c in children:
+		var next = get_node(c.to)
+		if next.max_out < 1:
+		# if next.base_type == LEAF:
+			nodes.append(next)
+		else:
+			nodes += get_nodes_dfs(c.to)
+
+	return nodes
 
 func get_connections(node_name):
 	return [] + get_links_in(node_name) + get_links_out(node_name)

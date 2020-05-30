@@ -12,7 +12,7 @@ const EMPTY = {
 	color=Color.white}
 
 var base_type = ""
-#var type_name = ""
+var type_name = ""
 
 # represent args that have been set, possible args are stored in graph
 var args_export = {}
@@ -24,6 +24,9 @@ var max_in = 0
 
 export var start_out = 0
 export var start_in = 0
+
+# func _ready():
+	# pass
 
 #func setup():
 #	start_in = clamp(start_in, 0, max_in)
@@ -108,26 +111,47 @@ func _set_slot_data(idx, data={}):
 func slot_count():
 	return get_child_count()
 
-func to_data():
+#func to_data():
+#	return {
+#		base_type=base_type,
+#		type_name=type_name,
+#		display_name=title,
+#		args_export=args_export,
+#		args_type=args_type,
+#		offset_x=offset.x,
+#		offset_y=offset.y,
+#		}
+
+func bt_data():
+	var d = {
+		name=type_name,
+		args=args_export
+	}
+	# for e in args:
+	# 	d[e] = args_export[e]
+	return d
+
+func graph_data():
 	return {
 		base_type=base_type,
-#		type_name=type_name,
+		type_name=type_name,
 		display_name=title,
-		args_export=args_export,
 		args_type=args_type,
+		args_export=args_export,
 		offset_x=offset.x,
 		offset_y=offset.y,
 		}
 
 func from_data(data):
 	title = data.display_name
-#	type_name = data.type_name
+	type_name = data.type_name
 	name = title
 	
 	base_type = data.base_type
 	
 	if "args_type" in data:
 		args_type = data.args_type
+		# print(args_type)
 
 	if "args_export" in data:
 		args_export = data.args_export
