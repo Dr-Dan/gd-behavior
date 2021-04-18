@@ -30,11 +30,11 @@ var tick = GDB.Tick.new()
 func print_hello_world():
 	var root = Seq.new([Print.new("Hello"), Print.new("World!")])
 	var tree_runner = GDB.TreeRunner.new(root)
-    
-    # prints "Hello", "World!"; result = BTNode.SUCCESS
+	
+	# prints "Hello", "World!"; result = BTNode.SUCCESS
 	var result = tree_runner.exe(tick)
 	print(result == GDB.BTNode.SUCCESS)
-    # root.exe(tick) # would also work as no running memory is required in tree
-    
+	# root.exe(tick) # would also work as no running memory is required in tree
+	
 func _run():
 	print_hello_world()

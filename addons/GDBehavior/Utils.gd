@@ -7,7 +7,7 @@ static func get_nodes_dfs(root:Composite):
 			nodes += get_nodes_dfs(c)
 		else:
 			nodes.append(c)
-			    
+				
 	return nodes
 	
 # result.children is the offset from parent to child not absolute position in data

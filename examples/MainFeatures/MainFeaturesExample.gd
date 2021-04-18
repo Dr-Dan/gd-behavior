@@ -20,9 +20,12 @@ class TestTick:
 	var time_waited = {}
 	var delta: float
 	var actor
+	var actors = []
+	var say_target
 	
-	func _init(actor):
+	func _init(actor, actors=[]):
 		self.actor = actor
+		self.actors = actors
 		
 # ================================================================		
 # CUSTOM NODES
@@ -118,7 +121,49 @@ class SayRandom:
 		tick.actor.speech = gr[i]
 		return SUCCESS
 
+class SayRandomToStored:
+	extends BTAction
 
+	func _init().("say random greeting"):
+		pass
+		
+	func _exe(tick):
+		if tick.say_target != null:
+			var gr = tick.actor.greetings
+			var i = randi() % gr.size()
+			tick.actor.speech = gr[i] + (" %s" % tick.say_target.actor_name)
+			return SUCCESS
+		return FAILURE
+		
+		
+class StoreActorInRange:
+	extends BTCondition
+	
+	var distance: float
+	
+	func _init(distance).("store actor in range?"):
+		self.distance = distance
+
+	func _exe(tick):
+		for a in tick.actors:
+			if a == tick.actor: continue
+			if tick.actor.position.distance_to(a.position) < distance:
+				tick.say_target = a
+				return SUCCESS
+		return FAILURE
+						
+class ClearSayTarget:
+	extends BTCondition
+	
+	func _init().("clear tick var"):
+		pass
+
+	func _exe(tick):
+		if tick.say_target != null:
+			tick.say_target = null
+			return SUCCESS
+		return FAILURE
+		
 # ================================================================		
 # CONDITIONALS
 const BTCondition = preload("res://addons/GDBehavior/Base/BTCondition.gd")
@@ -129,7 +174,7 @@ class AlwaysCondition:
 	extends BTCondition
 	var value:bool
 
-	func _init(value:bool).("is speaking?"):
+	func _init(value:bool).("always return"):
 		self.value = value
 
 	func _validate(tick):
@@ -139,19 +184,17 @@ class ActorInRange:
 	extends BTCondition
 	
 	var distance: float
-	var actors = []
 	
-	func _init(distance, actors:Array).("actor in range?"):
+	func _init(distance).("actor in range?"):
 		self.distance = distance
-		self.actors = actors
 
 	func _validate(tick):
-		for a in actors:
+		for a in tick.actors:
 			if a == tick.actor: continue
 			if tick.actor.position.distance_to(a.position) < distance:
 				return true
 		return false
-		
+
 class IsSpeaking:
 	extends BTCondition
 
@@ -192,20 +235,22 @@ var tree_runner
 func setup_actor_goto():
 	var vp_sz = get_viewport_rect().size
 	for a in actors:
-		var tick = TestTick.new(a)
+		var tick = TestTick.new(a, actors)
 		ticks.append(tick)
 		a.position = Vector2(randf() * vp_sz.x, randf() * vp_sz.y)
 	
 	# Setup behaviours
 	var speak = SeqMem.new([
-		# Multi-Condition decorator
+		# Multi-Condition decorator; not necessary in this case, here for demonstration.
 		MultiCondition.new(
 			# if all return SUCCESS
-			[Invert.new(IsSpeaking.new()), ActorInRange.new(80.0, actors)],	
-			# do this. (can be any type of node.)
-			SayRandom.new()), 
+			[Invert.new(IsSpeaking.new()), AlwaysCondition.new(true)],	
+			# do this. (can be any type of node)
+			StoreActorInRange.new(80.0)), 
+		SayRandomToStored.new(),
 		WaitDelta.new(2.5),
-		StopSpeaking.new()
+		StopSpeaking.new(),
+		ClearSayTarget.new()
 	])
 			
 	var goto = SeqMem.new([
