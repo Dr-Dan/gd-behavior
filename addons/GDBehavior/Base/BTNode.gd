@@ -11,6 +11,7 @@ func _init(name:String):
 
 func exe(tick):
 	tick.enter(self)
+	_enter(tick)
 	
 	if not self in tick.running:
 		tick.open(self)

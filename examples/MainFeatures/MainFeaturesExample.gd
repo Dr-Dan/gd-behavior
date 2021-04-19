@@ -8,8 +8,7 @@ An example where actors walk around and say something if within range.
 # The tick
 # 	passed to each node as they execute
 # 	handles the running memory and closing hanging nodes
-#	useful for extracting information about execution for logging
-# 	also used to get outside info to the running node as shown below
+# 	also used to pass data into and between nodes (as shown below)
 const Tick = preload("res://addons/GDBehavior/Tick.gd")
 
 class TestTick:
